@@ -7,7 +7,7 @@ from pydantic import BaseModel, EmailStr, Field
 # Base schema with common fields
 class UserBase(BaseModel):
     email: EmailStr
-    Username: str
+    username: str
 
 # Schema for creating a new user (registration)
 class UserCreate(UserBase):

@@ -25,7 +25,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 1 week
 
 # Password hashing functions
-def hash_passwords(password: str) -> str:
+def hash_password(password: str) -> str:
     """Hash plain text password"""
     return pwd_context.hash(password)
 
