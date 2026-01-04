@@ -33,7 +33,7 @@ def update_user_balance(db: Session, user_id: int, new_balance: float):
     """Update a user's balance"""
     user = get_user_by_id(db, user_id)
     if user:
-        user.balance == new_balance
+        user.balance = new_balance
         db.commit()
         db.refresh(user)
     return user

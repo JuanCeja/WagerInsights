@@ -1,10 +1,12 @@
-from app import models
 from app.database import Base, engine
+from app.routers import users
 from fastapi import FastAPI
 
 Base.metadata.create_all(bind = engine)
 
-app = FastAPI(title="WagerInsights API", version = "1.0.0")
+app = FastAPI(title="WagerInsights API", description="Sports betting tracker with virtual money", version = "1.0.0")
+
+app.include_router(users.router)
 
 @app.get("/")
 def read_root():
