@@ -1,5 +1,5 @@
-from app import crud, schemas
-from app.auth import create_access_token, verify_password
+from app import crud, models, schemas
+from app.auth import create_access_token, get_current_user, verify_password
 from app.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -67,3 +67,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = create_access_token(data={"user_id": user.id})
     
     return {"access_token": access_token, "token_type": "Bearer"}
+
+
+@router.get("/me", response_model = schemas.UserResponse)
+def get_current_user_profile(current_user: models.User = Depends(get_current_user)):
+    """
+    Get the currently logged-in user's profile.
+    
+    Requires valid JWT token in Authorization header.
+    """
+    return current_user
