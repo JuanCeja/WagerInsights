@@ -13,3 +13,20 @@ class User(Base):
     balance = Column(Float, default=1000.0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+class Game(Base):
+    __tablename__ = "games"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    home_team = Column(String, nullable=False)
+    away_team = Column(String, nullable=False)
+    home_team_odds = Column(Float, nullable=False)
+    away_team_odds = Column(Float, nullable=False)
+    sport = Column(String, nullable=False)
+    game_date = Column(DateTime, nullable=False)
+    status = Column(String, default="upcoming")
+    winner = Column(String, nullable=True)
+    settled_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
