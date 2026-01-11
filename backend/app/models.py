@@ -14,6 +14,8 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
+    bets = relationship("Bet", back_populates="user")
+    
 class Game(Base):
     __tablename__ = "games"
     
@@ -30,3 +32,19 @@ class Game(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
+    bets = relationship("Bet", back_populates="game")
+
+class Bet(Base):
+    __tablename__ = "bets"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    game_id = Column(Integer, ForeignKey("games.id"), nullable=False)
+    bet_type = Column(String, nullable=False)
+    bet_amount = Column(Float, nullable=False)
+    odds_at_bet = Column(Float, nullable=False)
+    potential_payout = Column(Float, nullable=False)
+    status = Column(String, default="pending")
+    settled_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
