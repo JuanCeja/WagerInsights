@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
+# ---------------------- USER SCHEMAS ----------------------
 
 # Base schema with common fields
 class UserBase(BaseModel):
@@ -27,6 +28,8 @@ class UserLogin(BaseModel):
     username_or_email: str
     password: str
 
+# ---------------------- TOKEN SCHEMAS ----------------------
+
 # Schema for JWT token response
 class Token(BaseModel):
     access_token: str
@@ -35,3 +38,30 @@ class Token(BaseModel):
 # Schema for token data
 class TokenData(BaseModel):
     user_id: Optional[int] = None
+
+# ---------------------- GAME SCHEMAS ----------------------
+
+class GameCreate(BaseModel):
+    home_team: str
+    away_team: str
+    odds: float
+    sport: str
+    game_date: datetime
+    status: Optional[str] = None
+
+
+# ---------------------- BET SCHEMAS ----------------------
+
+class BetCreate(BaseModel):
+    game_id: int
+    bet_type: str
+    bet_amount: int
+    
+class BetResponse(BetCreate):
+    user_id: int
+    bet_id: int
+    potential_payout: float
+    odds_at_bet: float
+    status: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
