@@ -41,27 +41,47 @@ class TokenData(BaseModel):
 
 # ---------------------- GAME SCHEMAS ----------------------
 
-class GameCreate(BaseModel):
+class GameBase(BaseModel):
     home_team: str
     away_team: str
-    odds: float
+    home_team_odds: float
+    away_team_odds: float
     sport: str
     game_date: datetime
-    status: Optional[str] = None
+    status: Optional[str] = "upcoming"
+    winner: Optional[str] = None
+    
+class GameCreate(GameBase):
+    pass
+
+class GameResponse(GameBase):
+    id: int
+    settled_at: Optional[datetime]
+    created_at: datetime
+    updated_at: Optional[datetime]
+    
+    class Config:
+        from_attributes: True
 
 
 # ---------------------- BET SCHEMAS ----------------------
 
-class BetCreate(BaseModel):
+class BetBase(BaseModel):
     game_id: int
     bet_type: str
-    bet_amount: int
+
+class BetCreate(BetBase):
+    bet_amount: float
     
 class BetResponse(BetCreate):
+    id: int
     user_id: int
-    bet_id: int
+    status: Optional[str]
     potential_payout: float
     odds_at_bet: float
-    status: Optional[str] = None
     created_at: datetime
-    updated_at: datetime
+    settled_at: Optional[datetime]
+    updated_at: Optional[datetime]
+    
+    class Config:
+        from_attributes: True
