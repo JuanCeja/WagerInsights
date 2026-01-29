@@ -113,8 +113,8 @@ def update_game_status(db: Session, game_id: int, winner: str, status: str = "co
 
 # -------------------- Bet CRUD Operations --------------------
 
-def get_bet_by_id(db: Session, id: int):
-    return db.query(models.Bet).filter(models.Bet.id == id).first()
+def get_bet_by_id(db: Session, bet_id: int):
+    return db.query(models.Bet).filter(models.Bet.id == bet_id).first()
 
 def get_user_bets(
     db: Session,
@@ -157,15 +157,38 @@ def update_bet_status(db: Session, id: int, status: str):
     db.refresh(bet)
     return bet
 
-def create_bet(db: Session, game_id: int, bet_type: str, bet_amount: float, user_id: int):
-    # first check if game is pending
+def create_bet(db: Session, bet:schemas.BetCreate, user_id: int):
+
+    game = db.query().filter(models.Game.id == bet.game_id).first()
     
-    # then grab how much funds user has
+    if not game:
+        return None
+
+    user = db.query().filter(models.User.id == user_id).first()
     
-    # if bet amount is < funds proceed else return an error
+    if not user:
+        return None
     
-    # subtract amount betted from users funds
+    if bet.bet_amount > user.balance:
+        return None
     
-    # submit bet
+    user.balance = user.balance - bet.bet_amount
     
-    # return bet
+    potential_payout = bet.bet_amount * bet.odds_at_bet
+    
+    db_bet = models.bet(
+        user_id = user_id,
+        game_id = bet.game_id,
+        bet_type = bet.bet_type,
+        bet_amount = bet.bet_amount,
+        odds_at_bet = bet.odds_at_bet,
+        potential_payout = potential_payout,
+        status = "pending"
+    )
+    
+    db.add(db_bet)
+    db.commit()
+    db.refresh(user)
+    db.refresh(db_bet)
+    
+    return db_bet
