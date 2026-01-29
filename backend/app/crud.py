@@ -144,14 +144,28 @@ def get_user_bets(
         
     return query.all()
 
-def update_bet_status(db: Session, id: int):
+def update_bet_status(db: Session, id: int, status: str):
     bet = db.query.filter(models.Bet.id == id).first()
     
     if bet is None:
         return None
     
-    bet.status = "completed"
+    bet.status = status
+    bet.settled_at = datetime.now(timezone.utc)
     
     db.commit()
     db.refresh(bet)
     return bet
+
+def create_bet(db: Session, game_id: int, bet_type: str, bet_amount: float, user_id: int):
+    # first check if game is pending
+    
+    # then grab how much funds user has
+    
+    # if bet amount is < funds proceed else return an error
+    
+    # subtract amount betted from users funds
+    
+    # submit bet
+    
+    # return bet
