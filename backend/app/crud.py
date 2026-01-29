@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from app import models, schemas
@@ -43,7 +43,7 @@ def update_user_balance(db: Session, user_id: int, new_balance: float):
 
 # -------------------- Game CRUD Operations --------------------
 
-def create_game(game: schemas.GameCreate, db: Session):
+def create_game(db: Session, game: schemas.GameCreate):
     
     created_game = models.Game(**game.model_dump())
     
@@ -57,15 +57,15 @@ def get_game_by_id(db: Session, game_id: int):
     return db.query(models.Game).filter(models.Game.id == game_id).first()
 
 def get_all_games(
-    home_team: Optional[str],
-    away_team: Optional[str],
-    status: Optional[str],
-    sport:Optional[str],
-    game_date: Optional[datetime],
-    winner: Optional[str],
-    settled_at: Optional[datetime],
-    created_at: Optional[datetime],
-    db: Session
+    db: Session,
+    home_team: Optional[str] = None,
+    away_team: Optional[str] = None,
+    status: Optional[str] = None,
+    sport:Optional[str] = None,
+    game_date: Optional[datetime] = None,
+    winner: Optional[str] = None,
+    settled_at: Optional[datetime] = None,
+    created_at: Optional[datetime] = None
     ):
     
     query = db.query(models.Game)
@@ -96,4 +96,62 @@ def get_all_games(
         
     return query.all()
 
+def update_game_status(db: Session, game_id: int, winner: str, status: str = "completed"):
+    game = db.query(models.Game).filter(models.Game.id == game_id).first()
+    
+    if not game:
+        return None
+    
+    game.status = status
+    game.winner = winner
+    game.settled_at = datetime.now(timezone.utc)
+    
+    db.commit()
+    db.refresh(game)
+    return game
+
+
 # -------------------- Bet CRUD Operations --------------------
+
+def get_bet_by_id(db: Session, id: int):
+    return db.query(models.Bet).filter(models.Bet.id == id).first()
+
+def get_user_bets(
+    db: Session,
+    id: Optional[int] = None,
+    status: Optional[str] = None,
+    bet_type: Optional[str] = None,
+    bet_amount: Optional[str] = None,
+    created_at: Optional[datetime] = None
+    ):
+    
+    query = db.query(models.Bet)
+    
+    if id is not None:
+        query = query.filter(models.Bet.id == id)
+        
+    if status is not None:
+        query = query.filter(models.Bet.status == status)
+        
+    if bet_type is not None:
+        query = query.filter(models.Bet.bet_type == bet_type)
+        
+    if bet_amount is not None:
+        query = query.filter(models.Bet.bet_amount == bet_amount)
+        
+    if created_at is not None:
+        query = query.filter(models.Bet.created_at == created_at)
+        
+    return query.all()
+
+def update_bet_status(db: Session, id: int):
+    bet = db.query.filter(models.Bet.id == id).first()
+    
+    if bet is None:
+        return None
+    
+    bet.status = "completed"
+    
+    db.commit()
+    db.refresh(bet)
+    return bet

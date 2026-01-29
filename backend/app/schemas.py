@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -68,7 +68,7 @@ class GameResponse(GameBase):
 
 class BetBase(BaseModel):
     game_id: int
-    bet_type: str
+    bet_type: Literal["home", "away"]
 
 class BetCreate(BetBase):
     bet_amount: float
