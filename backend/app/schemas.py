@@ -72,13 +72,13 @@ class BetBase(BaseModel):
 
 class BetCreate(BetBase):
     bet_amount: float
-    odds_at_bet: float
     
 class BetResponse(BetCreate):
     id: int
     user_id: int
     status: Optional[str]
     potential_payout: float
+    odds_at_bet: float
     created_at: datetime
     settled_at: Optional[datetime]
     updated_at: Optional[datetime]

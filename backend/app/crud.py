@@ -117,54 +117,54 @@ def get_bet_by_id(db: Session, bet_id: int):
     return db.query(models.Bet).filter(models.Bet.id == bet_id).first()
 
 def get_user_bets(
-    db: Session,
-    id: Optional[int] = None,
+    db: Session, 
+    user_id: int,
     status: Optional[str] = None,
-    bet_type: Optional[str] = None,
-    bet_amount: Optional[str] = None,
-    created_at: Optional[datetime] = None
+    bet_type: Optional[str] = None
     ):
     
-    query = db.query(models.Bet)
+    query = db.query(models.Bet).filter(models.Bet.user_id == user_id)
     
-    if id is not None:
-        query = query.filter(models.Bet.id == id)
-        
     if status is not None:
         query = query.filter(models.Bet.status == status)
-        
+
     if bet_type is not None:
         query = query.filter(models.Bet.bet_type == bet_type)
-        
-    if bet_amount is not None:
-        query = query.filter(models.Bet.bet_amount == bet_amount)
-        
-    if created_at is not None:
-        query = query.filter(models.Bet.created_at == created_at)
-        
-    return query.all()
+    
+    return query.order_by(models.Bet.created_at.desc()).all()
 
-def update_bet_status(db: Session, id: int, status: str):
-    bet = db.query.filter(models.Bet.id == id).first()
+def update_bet_status(db: Session, bet_id: int, status: str):
+    bet = get_bet_by_id(db, bet_id)
     
     if bet is None:
+        return None
+    
+    if bet.status != "pending":
         return None
     
     bet.status = status
     bet.settled_at = datetime.now(timezone.utc)
     
+    if status == "won":
+        user = get_user_by_id(db, bet.user_id)
+        new_balance = user.balance + bet.potential_payout
+        update_user_balance(db, bet.user_id, new_balance)
+    
     db.commit()
     db.refresh(bet)
     return bet
 
-def create_bet(db: Session, bet:schemas.BetCreate, user_id: int):
+def create_bet(db: Session, user_id: int, bet:schemas.BetCreate):
 
-    game = db.query().filter(models.Game.id == bet.game_id).first()
+    game = get_game_by_id(db, bet.game_id)
     
-    if not game:
+    if not game or game.status != "upcoming":
+        return None
+    
+    if bet.bet_type not in ["home", "away"]:
         return None
 
-    user = db.query().filter(models.User.id == user_id).first()
+    user = get_user_by_id(db, user_id)
     
     if not user:
         return None
@@ -172,23 +172,28 @@ def create_bet(db: Session, bet:schemas.BetCreate, user_id: int):
     if bet.bet_amount > user.balance:
         return None
     
-    user.balance = user.balance - bet.bet_amount
+    new_balance = user.balance - bet.bet_amount
+    update_user_balance(db, user_id, new_balance)
     
-    potential_payout = bet.bet_amount * bet.odds_at_bet
+    if bet.bet_type == "home":
+        game_odds = game.home_team_odds
+    else:
+        game_odds = game.away_team_odds
+        
+    potential_payout = bet.bet_amount * game_odds
     
-    db_bet = models.bet(
+    db_bet = models.Bet(
         user_id = user_id,
         game_id = bet.game_id,
         bet_type = bet.bet_type,
         bet_amount = bet.bet_amount,
-        odds_at_bet = bet.odds_at_bet,
+        odds_at_bet = game_odds,
         potential_payout = potential_payout,
         status = "pending"
     )
     
     db.add(db_bet)
     db.commit()
-    db.refresh(user)
     db.refresh(db_bet)
     
     return db_bet
