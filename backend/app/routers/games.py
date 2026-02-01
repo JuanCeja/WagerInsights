@@ -36,3 +36,15 @@ def get_games(
     )
     
     return games
+
+@router.get("/{game_id}", response_model=schemas.GameResponse, status_code=status.HTTP_200_OK)
+def get_specific_game(game_id: int, db: Session = Depends(get_db)):
+    game = crud.get_game_by_id(db, game_id)
+    
+    if not game:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Game does not exist"
+        )
+        
+    return game
