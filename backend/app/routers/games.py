@@ -11,7 +11,7 @@ router = APIRouter(
     tags=["Games"]
 )
 
-@router.get("", response_model=schemas.GameResponse, status_code=status.HTTP_200_OK)
+@router.get("", response_model=list[schemas.GameResponse], status_code=status.HTTP_200_OK)
 def get_games(
     home_team: Optional[str] = None,
     away_team: Optional[str] = None,
