@@ -11,6 +11,7 @@ router = APIRouter(
     tags=["Games"]
 )
 
+# get all games with optional filter
 @router.get("", response_model=list[schemas.GameResponse], status_code=status.HTTP_200_OK)
 def get_games(
     home_team: Optional[str] = None,
@@ -37,6 +38,7 @@ def get_games(
     
     return games
 
+# get game single game by id
 @router.get("/{game_id}", response_model=schemas.GameResponse, status_code=status.HTTP_200_OK)
 def get_specific_game(game_id: int, db: Session = Depends(get_db)):
     game = crud.get_game_by_id(db, game_id)
