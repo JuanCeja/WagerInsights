@@ -17,4 +17,11 @@ def place_bet(
     db: Session = Depends(get_db)
 ):
     """Place a new bet"""
-    return crud.create_bet(db, current_user.id, bet)
+    try:
+        return crud.create_bet(db, current_user.id, bet)
+    except ValueError as e:
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            raise HTTPException(status_code=404, detail=error_msg)
+        else:
+            raise HTTPException(status_code=400, detail=error_msg)
