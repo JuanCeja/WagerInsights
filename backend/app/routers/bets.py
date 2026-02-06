@@ -34,3 +34,19 @@ def get_bets(
     bet_type: str = None
 ):
     return crud.get_user_bets(db, current_user.id, status, bet_type)
+
+@router.get("/{bet_id}", response_model=schemas.BetResponse, status_code=status.HTTP_200_OK)
+def get_unique_bet(
+    bet_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    bet = crud.get_bet_by_id(db, bet_id)
+    
+    if not bet:
+        raise HTTPException(status_code=404, detail="Bet does not exist")
+    
+    if current_user.id != bet.user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this bet")
+    
+    return bet
