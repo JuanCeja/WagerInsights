@@ -3,6 +3,7 @@ from typing import Optional
 
 from app import models, schemas
 from app.auth import hash_password
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 # -------------------- User CRUD Operations --------------------
@@ -158,19 +159,19 @@ def create_bet(db: Session, user_id: int, bet:schemas.BetCreate):
 
     game = get_game_by_id(db, bet.game_id)
     
-    if not game or game.status != "upcoming":
-        return None
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    if game.status != "upcoming":
+        raise HTTPException(status_code=400, detail="Game is not available for betting")
     
     if bet.bet_type not in ["home", "away"]:
-        return None
+        raise HTTPException(status_code=400, detail="Invalid data type")
 
     user = get_user_by_id(db, user_id)
     
-    if not user:
-        return None
-    
     if bet.bet_amount > user.balance:
-        return None
+        raise HTTPException(status_code=400, detail="Insufficient balance")
     
     new_balance = user.balance - bet.bet_amount
     update_user_balance(db, user_id, new_balance)
