@@ -213,7 +213,7 @@ def settle_game(db: Session, game_id: int, winner: str):
     if winner not in ["home", "away"]:
         raise ValueError("Winner must be a 'home' or 'away'")
     
-    game.status = "settled"
+    game.status = "completed"
     game.winner = winner
     game.settled_at = datetime.now()
     
@@ -226,17 +226,16 @@ def settle_bets_for_game(db: Session, game_id: int, winner: str):
     bets = db.query(models.Bet).filter(models.Bet.game_id == game_id, models.Bet.status == "pending").all()
     
     for bet in bets:
-        if bet.bet_type == "winner":
+        if bet.bet_type == winner:
             bet.status = "won"
             user = get_user_by_id(db, bet.user_id)
             payout = user.balance + bet.potential_payout
             update_user_balance(db, user.id, payout)
-            bet.settled_at = datetime.now()
         else:
             bet.status = "lost"
-            bet.settled_at = datetime.now()
     
+        bet.settled_at = datetime.now()
+        
     db.commit()
-    db.refresh(bets)
     
     return bets
