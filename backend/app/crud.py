@@ -222,3 +222,21 @@ def settle_game(db: Session, game_id: int, winner: str):
     
     return game
 
+def settle_bets_for_game(db: Session, game_id: int, winner: str):
+    bets = db.query(models.Bet).filter(models.Bet.game_id == game_id, models.Bet.status == "pending").all()
+    
+    for bet in bets:
+        if bet.bet_type == "winner":
+            bet.status = "won"
+            user = get_user_by_id(db, bet.user_id)
+            payout = user.balance + bet.potential_payout
+            update_user_balance(db, user.id, payout)
+            bet.settled_at = datetime.now()
+        else:
+            bet.status = "lost"
+            bet.settled_at = datetime.now()
+    
+    db.commit()
+    db.refresh(bets)
+    
+    return bets
