@@ -197,3 +197,28 @@ def create_bet(db: Session, user_id: int, bet:schemas.BetCreate):
     db.refresh(db_bet)
     
     return db_bet
+
+
+# -------------------- Admin CRUD Operations --------------------
+
+def settle_game(db: Session, game_id: int, winner: str):
+    game = get_game_by_id(db, game_id)
+    
+    if not game:
+        raise ValueError("Game not found")
+    
+    if game.status != "upcoming":
+        raise ValueError("Game has already been settled")
+    
+    if winner not in ["home", "away"]:
+        raise ValueError("Winner must be a 'home' or 'away'")
+    
+    game.status = "settled"
+    game.winner = winner
+    game.settled_at = datetime.now()
+    
+    db.commit()
+    db.refresh(game)
+    
+    return game
+
