@@ -54,6 +54,9 @@ class GameBase(BaseModel):
 class GameCreate(GameBase):
     pass
 
+class GameSettleUpdate(BaseModel):
+    winner: str
+
 class GameResponse(GameBase):
     id: int
     settled_at: Optional[datetime]
@@ -73,6 +76,9 @@ class BetBase(BaseModel):
 class BetCreate(BetBase):
     bet_amount: float
     
+class BetSettleUpdate(BaseModel):
+    status: Literal["won", "lost"]
+
 class BetResponse(BetCreate):
     id: int
     user_id: int

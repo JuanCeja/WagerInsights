@@ -25,7 +25,7 @@ def place_bet(
             raise HTTPException(status_code=404, detail=error_msg)
         else:
             raise HTTPException(status_code=400, detail=error_msg)
-        
+
 @router.get("", response_model=list[schemas.BetResponse], status_code=status.HTTP_200_OK)
 def get_bets(
     current_user: models.User = Depends(auth.get_current_user),
