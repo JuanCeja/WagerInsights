@@ -54,8 +54,6 @@ class GameBase(BaseModel):
 class GameCreate(GameBase):
     pass
 
-class GameSettleUpdate(BaseModel):
-    winner: Literal["home", "away"]
 
 class GameResponse(GameBase):
     id: int
@@ -88,3 +86,13 @@ class BetResponse(BetCreate):
     
     class Config:
         from_attributes: True
+
+
+# ---------------------- ADMIN SCHEMAS ----------------------
+
+class GameSettleUpdate(BaseModel):
+    winner: Literal["home", "away"]
+    
+class SettlementSummary(BaseModel):
+    settled_game: GameResponse
+    bets_settled: list[BetResponse]
