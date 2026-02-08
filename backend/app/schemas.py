@@ -55,7 +55,7 @@ class GameCreate(GameBase):
     pass
 
 class GameSettleUpdate(BaseModel):
-    winner: str
+    winner: Literal["home", "away"]
 
 class GameResponse(GameBase):
     id: int
@@ -75,9 +75,6 @@ class BetBase(BaseModel):
 
 class BetCreate(BetBase):
     bet_amount: float
-    
-class BetSettleUpdate(BaseModel):
-    status: Literal["won", "lost"]
 
 class BetResponse(BetCreate):
     id: int
