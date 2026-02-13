@@ -21,6 +21,7 @@ class Game(Base):
     __tablename__ = "games"
     
     id = Column(Integer, primary_key=True, index=True)
+    external_api_id = Column(String, index=True, unique=True, nullable=True)
     home_team = Column(String, nullable=False)
     away_team = Column(String, nullable=False)
     home_team_odds = Column(Float, nullable=False)
