@@ -7,7 +7,6 @@ class OddsAPIClient:
         self.base_URL = "https://api.the-odds-api.com/v4"
         
     def get_games(self, sport: str):
-        print(f"[DEBUG] Calling API for sport: {sport}")
         try:
             url = f"{self.base_URL}/sports/{sport}/odds"
             params = {
@@ -17,18 +16,29 @@ class OddsAPIClient:
                 "oddsFormat": "american"
             }
             
-            print(f"[DEBUG] URL: {url}")
-            print(f"[DEBUG] Params: {params}")
-            
             response = requests.get(url, params=params)
-            
-            print(f"[DEBUG] Status Code: {response.status_code}")
-            print(f"[DEBUG] Response headers: {response.headers}")
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"[DEBUG] Got {len(data)} games")
                 return data
+            else:
+                raise Exception(f"API returned {response.status_code}: {response.text}")
+            
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Request failed: {e}")
+        
+    def get_sports(self):
+        print(f"[DEBUG] Fetching available sports...")
+        
+        try:
+            url = f"{self.base_URL}/sports/?apiKey={self.api_key}"
+            
+            response = requests.get(url)
+            
+            if response.status_code == 200:
+                sports = response.json()
+                print(f"[DEBUG] Found {len(sports)} sports")
+                return sports
             else:
                 raise Exception(f"API returned {response.status_code}: {response.text}")
             
