@@ -7,11 +7,20 @@ class OddsAPIClient:
         self.base_URL = "https://api.the-odds-api.com/v4"
         
     def get_games(self, sport: str):
-        response = requests.get(f"{self.base_URL}/sports/{sport}/odds?regions=us&markets=us&oddsFormat=american")
-        
         try:
+            response = requests.get(
+                f"{self.base_URL}/sports/{sport}/odds",
+                params={
+                    "apiKey": self.api_key,
+                    "regions": "us",
+                    "markets": "h2h",
+                    "oddsFormat": "american"
+            })
+        
             if response.status_code == 200:
                 return response.json()
+            else:
+                raise Exception(f"API returned {response.status_code}: {response.text}")
+            
         except requests.exceptions.RequestException as e:
-            print(f"Request failed: {e}")
-            return []
+            raise Exception(f"Request failed: {e}")
