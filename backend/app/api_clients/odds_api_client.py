@@ -27,9 +27,7 @@ class OddsAPIClient:
         except requests.exceptions.RequestException as e:
             raise Exception(f"Request failed: {e}")
         
-    def get_sports(self):
-        print(f"[DEBUG] Fetching available sports...")
-        
+    def get_sports(self):        
         try:
             url = f"{self.base_URL}/sports/?apiKey={self.api_key}"
             
@@ -37,7 +35,6 @@ class OddsAPIClient:
             
             if response.status_code == 200:
                 sports = response.json()
-                print(f"[DEBUG] Found {len(sports)} sports")
                 return sports
             else:
                 raise Exception(f"API returned {response.status_code}: {response.text}")
