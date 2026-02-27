@@ -259,4 +259,8 @@ def sync_game_from_api(db: Session, game_data: dict) -> models.Game:
         db.refresh(existing_game)
         return existing_game
     else:
-        return create_game(db, game_data)
+        new_game = models.Game(**game_data)
+        db.add(new_game)
+        db.commit()
+        db.refresh(new_game)
+        return new_game

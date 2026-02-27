@@ -43,8 +43,11 @@ def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db:
     
     return summary
 
-@router.post("/admin/sync_games/{sport}", status_code=status.HTTP_200_OK)
+@router.post("/sync_games/{sport}", status_code=status.HTTP_200_OK)
 def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
+    if not api_key:
+        raise HTTPException(status_code=500, detail="ODDS_API_KEY not configured")
+    
     created_games = 0
     updated_games = 0
     

@@ -1,8 +1,6 @@
 from app.database import Base, engine
-from app.routers import bets, games, users
+from app.routers import admin, bets, games, users
 from fastapi import FastAPI
-
-from backend.app.routers import admin
 
 Base.metadata.create_all(bind = engine)
 
