@@ -43,23 +43,34 @@ def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db:
     
     return summary
 
-@router.post("/admin/sync_games/{sport}", list[response_model=schemas.GameResponse], status_code=status.HTTP_200_OK)
+@router.post("/admin/sync_games/{sport}", status_code=status.HTTP_200_OK)
 def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
     created_games = 0
     updated_games = 0
     
     client = OddsAPIClient(api_key=api_key)
-    games = client.get_games(sport)
+    try:
+        games = client.get_games(sport)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch from API: {str(e)}")
     
     for game in games:
         parsed_game = parse_api_game_to_model(game)
-        current_game = crud.get_game_by_id(db, parsed_game["external_api_id"])
-        if current_game:
-            current_game = parsed_game
+        existing_game = db.query(models.Game).filter(models.Game.external_api_id == parsed_game["external_api_id"]).first()
+        
+        crud.sync_game_from_api(db, parsed_game)
+        
+        if existing_game:
             updated_games += 1
         else:
-            crud.create_game(db, parsed_game)
             created_games += 1
+            
+    summary = f"{created_games} games were created and {updated_games} were updated"
     
-    print(f"{created_games} games were created and {updated_games} were updated")
-    return games
+    return {
+        "sport": sport,
+        "total_fetched": len(games),
+        "created": created_games,
+        "updated": updated_games,
+        "summary": summary
+    }
