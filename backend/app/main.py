@@ -1,6 +1,8 @@
 from app.database import Base, engine
-from app.routers import admins, bets, games, users
+from app.routers import bets, games, users
 from fastapi import FastAPI
+
+from backend.app.routers import admin
 
 Base.metadata.create_all(bind = engine)
 
@@ -9,7 +11,7 @@ app = FastAPI(title="WagerInsights API", description="Sports betting tracker wit
 app.include_router(users.router)
 app.include_router(bets.router)
 app.include_router(games.router)
-app.include_router(admins.router)
+app.include_router(admin.router)
 
 @app.get("/")
 def read_root():

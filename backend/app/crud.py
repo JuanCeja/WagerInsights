@@ -251,8 +251,6 @@ def sync_game_from_api(db: Session, game_data: dict) -> models.Game:
     existing_game = db.query(models.Game).filter(models.Game.external_api_id == game_data["external_api_id"]).first()
     
     if existing_game:
-        existing_game.home_team = game_data["home_team"]
-        existing_game.away_team = game_data["away_team"]
         existing_game.home_team_odds = game_data["home_team_odds"]
         existing_game.away_team_odds = game_data["away_team_odds"]
         existing_game.game_date = game_data["game_date"]
@@ -261,8 +259,4 @@ def sync_game_from_api(db: Session, game_data: dict) -> models.Game:
         db.refresh(existing_game)
         return existing_game
     else:
-        new_game = create_game(db, game_data)
-        db.add(new_game)
-        db.commit()
-        db.refresh(new_game)
-        return new_game
+        return create_game(db, game_data)

@@ -27,7 +27,7 @@ class OddsAPIClient:
         except requests.exceptions.RequestException as e:
             raise Exception(f"Request failed: {e}")
         
-    def get_sports(self):        
+    def get_sports(self):
         try:
             url = f"{self.base_URL}/sports/?apiKey={self.api_key}"
             
