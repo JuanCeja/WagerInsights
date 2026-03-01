@@ -77,3 +77,12 @@ def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
         "updated": updated_games,
         "summary": summary
     }
+    
+@router.get("/available_sports", status_code=status.HTTP_200_OK)
+def available_sports():
+    client = OddsAPIClient(api_key)
+    try:
+        list_of_available_sports = client.get_sports()
+        return list_of_available_sports
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch sports: {str(e)}")
