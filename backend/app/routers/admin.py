@@ -61,6 +61,25 @@ def available_sports():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch sports: {str(e)}")
 
+@router.post("/bulk_sync_games", status_code=status.HTTP_200_OK)
+def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_db)):
+    results = []
+    
+    
+    for sport in request.sports:
+        result = _sync_single_sport(sport, db)
+        results.append(result)
+    
+    successful = sum(1 for r in results if r.get("success"))
+    failed = len(results) - successful
+    
+    return {
+        "results": results,
+        "total_sports": len(results),
+        "successful": successful,
+        "failed": failed
+    }
+
 
 def _sync_single_sport(sport: str, db: Session) -> dict:
     if not api_key:
