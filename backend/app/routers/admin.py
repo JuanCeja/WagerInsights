@@ -45,8 +45,30 @@ def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db:
 
 @router.post("/sync_games/{sport}", status_code=status.HTTP_200_OK)
 def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
+    result = _sync_single_sport(sport, db)
+    
+    if not result.get("success", True):
+        raise HTTPException(status_code=500, detail=result.get("error", "Unknown error"))
+    
+    return result
+
+@router.get("/available_sports", status_code=status.HTTP_200_OK)
+def available_sports():
+    client = OddsAPIClient(api_key)
+    try:
+        list_of_available_sports = client.get_sports()
+        return list_of_available_sports
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch sports: {str(e)}")
+
+
+def _sync_single_sport(sport: str, db: Session) -> dict:
     if not api_key:
-        raise HTTPException(status_code=500, detail="ODDS_API_KEY not configured")
+        return {
+            "sport": sport,
+            "success": False,
+            "error": "ODDS_API_KEY not configured"
+        }
     
     created_games = 0
     updated_games = 0
@@ -55,7 +77,11 @@ def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
     try:
         games = client.get_games(sport)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch from API: {str(e)}")
+        return {
+            "sport": sport,
+            "success": False,
+            "error": f"Failed to fetch from API: {str(e)}"
+        }
     
     for game in games:
         parsed_game = parse_api_game_to_model(game)
@@ -72,17 +98,9 @@ def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
     
     return {
         "sport": sport,
+        "success": True,
         "total_fetched": len(games),
         "created": created_games,
         "updated": updated_games,
         "summary": summary
     }
-    
-@router.get("/available_sports", status_code=status.HTTP_200_OK)
-def available_sports():
-    client = OddsAPIClient(api_key)
-    try:
-        list_of_available_sports = client.get_sports()
-        return list_of_available_sports
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch sports: {str(e)}")

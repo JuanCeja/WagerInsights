@@ -54,7 +54,6 @@ class GameBase(BaseModel):
 class GameCreate(GameBase):
     pass
 
-
 class GameResponse(GameBase):
     id: int
     settled_at: Optional[datetime]
@@ -96,3 +95,6 @@ class GameSettleUpdate(BaseModel):
 class SettlementSummary(BaseModel):
     settled_game: GameResponse
     bets_settled: list[BetResponse]
+    
+class BulkSyncRequest(BaseModel):
+    sports: list[str]
