@@ -42,3 +42,22 @@ class OddsAPIClient:
             
         except requests.exceptions.RequestException as e:
             raise Exception(f"Request failed: {e}")
+        
+    def get_scores(self, sport: str):
+        """Fetch recent and live game scores for a sport"""
+        try:
+            url = f"{self.base_URL}/sports/{sport}/scores"
+            params = {
+                "apiKey": self.api_key,
+                "daysFrom": 1 # Get scores from the last 1 day
+            }
+            
+            response = requests.get(url, params=params)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise Exception(f"API returned {response.status_code}: {response.text}")
+            
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Request Failed: {e}")
