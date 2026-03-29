@@ -120,14 +120,14 @@ def get_game_stats(db: Session) -> dict:
         func.count(models.Game.id)
     ).group_by(models.Game.sport).all()
     
-    by_sport = {sport: count for count, count in by_sport_query}
+    by_sport = {sport: count for sport, count in by_sport_query}
     
     by_status_query = db.query(
         models.Game.status,
-        func.count(models.Game.status)
+        func.count(models.Game.id)
     ).group_by(models.Game.status).all()
     
-    by_status = {status: count for count, count in by_status_query}
+    by_status = {status: count for status, count in by_status_query}
     
     return {
         "total_games": total,
