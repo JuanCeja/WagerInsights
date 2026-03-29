@@ -38,6 +38,11 @@ def get_games(
     
     return games
 
+@router.get("/game_stats", status_code=status.HTTP_200_OK)
+def get_game_statistics(db: Session = Depends(get_db)):
+    game_stat_details = crud.get_game_stats(db)
+    return game_stat_details
+
 # get game single game by id
 @router.get("/{game_id}", response_model=schemas.GameResponse, status_code=status.HTTP_200_OK)
 def get_specific_game(game_id: int, db: Session = Depends(get_db)):
