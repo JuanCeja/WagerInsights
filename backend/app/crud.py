@@ -1,9 +1,12 @@
+import os
 from datetime import datetime, timezone
 from typing import Optional
 
 from app import models, schemas
+from app.api_clients.odds_api_client import OddsAPIClient
 from app.auth import hash_password
 from app.utils.odds_parser import parse_api_game_to_model
+from app.utils.scores_parser import parse_winner_from_scores
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -287,3 +290,31 @@ def sync_game_from_api(db: Session, game_data: dict) -> models.Game:
         db.commit()
         db.refresh(new_game)
         return new_game
+    
+
+# -------------------- Auto-Settlement CRUD Operations --------------------
+
+def auto_settle_completed_games(db: Session, sport: str, api_key: str) -> dict:
+    """
+    Fetch scores for a sport and auto-settle completed games.
+    
+    Returns summary of games settled.
+    """
+    
+    settled_count = 0
+    errors = []
+    
+    #Fetch scores from API
+    client = OddsAPIClient(api_key=api_key)
+    try:
+        scores_data = client.get_scores(sport)
+    except Exception as e:
+        return {
+            "sport": sport,
+            "success": False,
+            "error": f"Failed to fetch scores: {str(e)}"
+        }
+        
+    #Process each completed game
+    
+    

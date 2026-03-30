@@ -18,3 +18,6 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "Healthy"}
+
+
+    #finish completing CRUD function auto_settle_completed_games
