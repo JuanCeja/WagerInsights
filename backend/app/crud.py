@@ -301,4 +301,35 @@ def auto_settle_completed_games(db: Session, sport: str, api_key: str) -> dict:
     Returns summary of games settled.
     """
     
+    settled_count = 0
+    errors = []
     
+    #Fetch scores from API
+    client = OddsAPIClient(api_key=api_key)
+    try:
+        scores_data = client.get_scores(sport)
+    except Exception as e:
+        return {
+            "sport": sport,
+            "success": False,
+            "error": f"Failed to fetch scores: {str(e)}"
+        }
+        
+    #Process each completed game
+    for game in scores_data:
+        game_in_db = db.query(models.Game).filter(models.Game.external_api_id == game.id).first()
+        
+        if game_in_db.winner == None:
+            winner = parse_winner_from_scores(game)
+            update_game_status(db, game_in_db.id, winner)
+            settle_bets_for_game(db, game_in_db.id, winner)
+            settled_count += 1
+        else:
+            errors.append(game_in_db)
+            
+    return {
+        "sport": sport,
+        "success": True,
+        "games_settled": settled_count,
+        "errors": errors
+    }
