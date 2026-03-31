@@ -300,7 +300,7 @@ def auto_settle_completed_games(db: Session, sport: str, api_key: str) -> dict:
     
     Returns summary of games settled.
     """
-    
+    settled_games = []
     settled_count = 0
     errors = []
     
@@ -317,16 +317,26 @@ def auto_settle_completed_games(db: Session, sport: str, api_key: str) -> dict:
         
     #Process each completed game
     for game in scores_data:
-        game_in_db = db.query(models.Game).filter(models.Game.external_api_id == game.id).first()
+        if not game.get("completed"):
+            continue
         
-        if game_in_db.winner == None:
-            winner = parse_winner_from_scores(game)
-            update_game_status(db, game_in_db.id, winner)
-            settle_bets_for_game(db, game_in_db.id, winner)
-            settled_count += 1
-        else:
-            errors.append(game_in_db)
+        game_in_db = db.query(models.Game).filter(models.Game.external_api_id == game["id"]).first()
+        
+        if not game_in_db:
+            continue
+        
+        if game_in_db.status != "completed":
+            try:
+                winner = parse_winner_from_scores(game)
+                settle_game(db, game_in_db.id, winner)
+                settle_bets_for_game(db, game_in_db.id, winner)
+                settled_count += 1
+                settled_games.append(game_in_db.id)
+            except Exception as e:
+                errors.append(f"Game {game_in_db.id}: {str(e)}")
             
+
+
     return {
         "sport": sport,
         "success": True,
