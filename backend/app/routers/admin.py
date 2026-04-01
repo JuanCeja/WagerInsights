@@ -117,6 +117,10 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
     
     for game in games:
         parsed_game = parse_api_game_to_model(game)
+        
+        if parsed_game["home_team_odds"] is None or parsed_game["away_team_odds"] is None:
+            continue
+    
         existing_game = db.query(models.Game).filter(models.Game.external_api_id == parsed_game["external_api_id"]).first()
         
         crud.sync_game_from_api(db, parsed_game)
