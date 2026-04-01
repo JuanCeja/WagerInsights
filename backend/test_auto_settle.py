@@ -13,7 +13,7 @@ print("=== TESTING AUTO-SETTLEMENT ===\n")
 # Run auto-settlement for NBA
 result = crud.auto_settle_completed_games(
     db=db,
-    sport="basketball_nba",
+    sport="icehockey_nhl",
     api_key=os.getenv("ODDS_API_KEY")
 )
 
