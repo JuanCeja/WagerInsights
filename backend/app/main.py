@@ -7,14 +7,49 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+load_dotenv()
 
 def auto_settle_all_sports():
     """Background job to automatically settle completed games"""
+        
+    sports = [
+        "basketball_nba",
+        "icehockey_nhl",
+        "americanfootball_ncaaf",
+        "americanfootball_ufl",
+        "baseball_mlb",
+        "soccer_epl",
+        "soccer_mexico_ligamx",
+        "soccer_uefa_champs_league"
+    ]
     
+    db = SessionLocal()
+    api_key = os.getenv("ODDS_API_KEY")
+    
+    try:
+        for sport in sports:
+            crud.auto_settle_completed_games(db, sport, api_key)
+    finally:
+        db.close()
 
 Base.metadata.create_all(bind = engine)
 
 app = FastAPI(title="WagerInsights API", description="Sports betting tracker with virtual money", version = "1.0.0")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    func=auto_settle_all_sports,
+    trigger="interval",
+    hours=1
+)
+
+@app.on_event("startup")
+def start_scheduler():
+    scheduler.start()
+
+@app.on_event("shutdown")
+def shutdown_scheduler():
+    scheduler.shutdown()
 
 app.include_router(users.router)
 app.include_router(bets.router)
