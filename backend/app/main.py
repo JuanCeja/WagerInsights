@@ -1,6 +1,16 @@
-from app.database import Base, engine
+import os
+
+from app import crud
+from app.database import Base, SessionLocal, engine
 from app.routers import admin, bets, games, users
+from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import load_dotenv
 from fastapi import FastAPI
+
+
+def auto_settle_all_sports():
+    """Background job to automatically settle completed games"""
+    
 
 Base.metadata.create_all(bind = engine)
 
@@ -18,6 +28,3 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "Healthy"}
-
-
-    #finish completing CRUD function auto_settle_completed_games
