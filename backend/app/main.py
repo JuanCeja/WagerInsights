@@ -31,6 +31,32 @@ def auto_settle_all_sports():
             crud.auto_settle_completed_games(db, sport, api_key)
     finally:
         db.close()
+        
+def auto_sync_all_sports_and_games():
+    """Background job to automatically syncs new sports and games"""
+    
+    print("\n=== AUTO-SYNC JOB STARTED ===")
+    
+    sports = [
+        "basketball_nba",
+        "icehockey_nhl",
+        "americanfootball_ncaaf",
+        "americanfootball_ufl",
+        "baseball_mlb",
+        "soccer_epl",
+        "soccer_mexico_ligamx",
+        "soccer_uefa_champs_league"
+    ]
+    
+    db = SessionLocal()
+    
+    try:
+        for sport in sports:
+            result = admin._sync_single_sport(sport, db)
+            print(f"{sport}: {result['created']} created, {result['updated']} updated")
+    finally:
+        db.close()
+        print("=== AUTO-SYNC JOB COMPLETE ===\n")
 
 Base.metadata.create_all(bind = engine)
 
@@ -41,6 +67,11 @@ scheduler.add_job(
     func=auto_settle_all_sports,
     trigger="interval",
     hours=1
+)
+scheduler.add_job(
+    func=auto_sync_all_sports_and_games,
+    trigger="interval",
+    hours=12
 )
 
 @app.on_event("startup")

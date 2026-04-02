@@ -81,7 +81,7 @@ def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_
     }
     
 @router.post("/sync_games/{sport}", status_code=status.HTTP_200_OK)
-def sync_games_frdom_api(sport: str, db: Session = Depends(get_db)):
+def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
     result = _sync_single_sport(sport, db)
     
     if not result.get("success", True):
@@ -134,7 +134,7 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
     
     return {
         "sport": sport,
-        "success": True,
+        "success": True, 
         "total_fetched": len(games),
         "created": created_games,
         "updated": updated_games,
