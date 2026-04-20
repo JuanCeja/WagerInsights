@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/Input"
+import { Label } from "@/components/ui/Label"
 import { useState } from "react"
 
 function Login() {
@@ -17,24 +19,28 @@ function Login() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-80">
                 <h1 className="text-2xl font-bold">Login</h1>
 
-                <input
-                    type="text"
-                    placeholder="Email or Username"
-                    value={usernameOrEmail}
-                    onChange={(e) => setUsernameOrEmail(e.target.value)}
-                    className="border p-2 rounded"
-                />
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="identifier">Email or Username</Label>
+                    <Input
+                        id="identifier"
+                        type="text"
+                        value={usernameOrEmail}
+                        onChange={(e) => setUsernameOrEmail(e.target.value)}
+                    />
+                </div>
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="border p-2 rounded"
-                />
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
 
-                <button type="submit" className="bg-black text-white p-2 rounded">
-                    Login
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Logging in..." : "Login"}
                 </button>
 
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
