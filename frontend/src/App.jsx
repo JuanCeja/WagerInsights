@@ -1,12 +1,27 @@
-import { Button } from "@/components/ui/button"
+import { Route, Routes } from 'react-router-dom'
+
+function Login() {
+  return (
+    <div className='flex min-h-sreen items-center justify-center'>
+      <h1 className='text-3xl font-bold'>Login Page</h1>
+    </div>
+  )
+}
+
+function Dashboard() {
+  return (
+    <div className='flex min-h-sreen items-center justify-center'>
+      <h1 className='text-3xl font-bold'>Dashboard Page</h1>
+    </div>
+  )
+}
 
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center gap-4">
-      <Button>Default</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="destructive">Destructive</Button>
-    </div>
+    <Routes>
+      <Route path='/' element={<Login />} />
+      <Route path='/dashboard' element={<Dashboard />} />
+    </Routes>
   )
 }
 
