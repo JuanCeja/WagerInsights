@@ -1,20 +1,6 @@
+import Dashboard from "@/pages/Dashboard"
+import Login from "@/pages/Login"
 import { Route, Routes } from 'react-router-dom'
-
-function Login() {
-  return (
-    <div className='flex min-h-sreen items-center justify-center'>
-      <h1 className='text-3xl font-bold'>Login Page</h1>
-    </div>
-  )
-}
-
-function Dashboard() {
-  return (
-    <div className='flex min-h-sreen items-center justify-center'>
-      <h1 className='text-3xl font-bold'>Dashboard Page</h1>
-    </div>
-  )
-}
 
 function App() {
   return (
