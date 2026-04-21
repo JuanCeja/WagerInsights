@@ -6,6 +6,7 @@ from app.routers import admin, bets, games, users
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
@@ -61,6 +62,14 @@ def auto_sync_all_sports_and_games():
 Base.metadata.create_all(bind = engine)
 
 app = FastAPI(title="WagerInsights API", description="Sports betting tracker with virtual money", version = "1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(

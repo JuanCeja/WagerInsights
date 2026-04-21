@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
+import { login } from "@/services/authService"
 import { useState } from "react"
 
 function Login() {
@@ -9,9 +10,10 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log("From submitted:", { usernameOrEmail, password })
+        const token = await login(usernameOrEmail, password)
+        console.log(token)
     }
 
     return (
