@@ -2,8 +2,11 @@ import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/Label"
 import { login } from "@/services/authService"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 function Login() {
+
+    const navigate = useNavigate()
 
     const [usernameOrEmail, setUsernameOrEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -12,8 +15,17 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const token = await login(usernameOrEmail, password)
-        console.log(token)
+        try {
+            setErrorMessage("")
+            setIsLoading(true)
+            const token = await login(usernameOrEmail, password)
+            localStorage.setItem("token", token.access_token)
+            navigate("/dashboard")
+        } catch (error) {
+            setErrorMessage("Incorrect email/username or password")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
