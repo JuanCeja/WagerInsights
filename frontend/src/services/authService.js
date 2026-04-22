@@ -19,3 +19,14 @@ export async function login(usernameOrEmail, password) {
 
     return response.data
 }
+
+export async function register(username, email, password) {
+    const formData = { username, email, password }
+
+    const response = await axios.post(
+        `${API_BASE_URL}/auth/register`,
+        formData
+    )
+
+    return response.data
+}

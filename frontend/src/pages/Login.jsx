@@ -1,5 +1,6 @@
-import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { login } from "@/services/authService"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -53,9 +54,9 @@ function Login() {
                     />
                 </div>
 
-                <button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
-                </button>
+                </Button>
 
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </form>
