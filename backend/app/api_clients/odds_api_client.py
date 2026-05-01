@@ -43,13 +43,13 @@ class OddsAPIClient:
         except requests.exceptions.RequestException as e:
             raise Exception(f"Request failed: {e}")
         
-    def get_scores(self, sport: str):
+    def get_scores(self, sport: str, days_from: int = 3):
         """Fetch recent and live game scores for a sport"""
         try:
             url = f"{self.base_URL}/sports/{sport}/scores"
             params = {
                 "apiKey": self.api_key,
-                "daysFrom": 1 # Get scores from the last 1 day
+                "daysFrom": days_from # Get scores from the last 1 day
             }
             
             response = requests.get(url, params=params)
