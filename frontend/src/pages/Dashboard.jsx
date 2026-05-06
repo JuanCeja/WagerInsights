@@ -1,6 +1,7 @@
 import GameCard from "@/components/GameCard"
 import { Button } from "@/components/ui/button.jsx"
 import { getGames } from "@/services/gamesService"
+import { getCurrentUser } from "@/services/userService"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -8,6 +9,7 @@ function Dashboard() {
     const [games, setGames] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
+    const [user, setUser] = useState(null)
 
     const navigate = useNavigate()
 
@@ -23,7 +25,19 @@ function Dashboard() {
             }
         }
 
+        async function getCurrentUserLoggedIn() {
+            try {
+                const userData = await getCurrentUser()
+                setUser(userData)
+            } catch (error) {
+                localStorage.removeItem("token")
+                navigate("/login")
+            }
+
+        }
+
         fetchGames()
+        getCurrentUserLoggedIn()
     }, [])
 
     const handleLogout = () => {
@@ -35,6 +49,7 @@ function Dashboard() {
         <div className='min-h-screen p-6'>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
+                <p>${user?.balance}</p>
                 <Button onClick={handleLogout} variant="outline">Logout</Button>
             </div>
             <div>
