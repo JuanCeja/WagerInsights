@@ -7,4 +7,4 @@ def calculate_payout(bet_amount: float, odds: float) -> float:
         # Negative odds: profit = stake * (100 / abs(odds))
         profit = bet_amount * (100 / abs(odds))
     
-    return bet_amount + profit
+    return round(bet_amount + profit, 2)

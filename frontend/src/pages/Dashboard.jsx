@@ -49,7 +49,7 @@ function Dashboard() {
         <div className='min-h-screen p-6'>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
-                <p>${user?.balance}</p>
+                <p>${user?.balance?.toFixed(2)}</p>
                 <Button onClick={handleLogout} variant="outline">Logout</Button>
             </div>
             <div>
