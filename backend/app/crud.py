@@ -10,6 +10,8 @@ from app.utils.scores_parser import parse_winner_from_scores
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.utils.bet_calculator import calculate_payout
+
 # -------------------- User CRUD Operations --------------------
 
 def get_user_by_email(db: Session, email: str):
@@ -207,7 +209,7 @@ def create_bet(db: Session, user_id: int, bet:schemas.BetCreate):
     else:
         game_odds = game.away_team_odds
         
-    potential_payout = bet.bet_amount * game_odds
+    potential_payout = calculate_payout(bet.bet_amount, game_odds)
     
     db_bet = models.Bet(
         user_id = user_id,
