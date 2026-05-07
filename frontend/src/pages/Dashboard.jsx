@@ -10,6 +10,8 @@ function Dashboard() {
     const [isLoading, setIsLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
     const [user, setUser] = useState(null)
+    const [selectedGame, setSelectedGame] = useState(null)
+    const [selectedBetType, setSelectedBetType] = useState(null)
 
     const navigate = useNavigate()
 
@@ -45,6 +47,11 @@ function Dashboard() {
         navigate("/login")
     }
 
+    const handleBetClick = (game, betType) => {
+        setSelectedGame(game)
+        setSelectedBetType(betType)
+    }
+
     return (
         <div className='min-h-screen p-6'>
             <div className="flex justify-between items-center mb-6">
@@ -63,7 +70,7 @@ function Dashboard() {
                             <p>No upcoming games</p>
                         ) : (
                             games.map((game) => (
-                                <GameCard key={game.id} game={game} />
+                                <GameCard key={game.id} game={game} onBetClick={handleBetClick} />
                             ))
                         )
                 }
