@@ -65,7 +65,12 @@ function Dashboard() {
                 <p>${user?.balance?.toFixed(2)}</p>
                 <Button onClick={handleLogout} variant="outline">Logout</Button>
             </div>
-            <BetDialog selectedGame={selectedGame} selectedBetType={selectedBetType} onClose={handleCloseDialog}/>
+            <BetDialog
+                key={selectedGame?.id}
+                selectedGame={selectedGame}
+                selectedBetType={selectedBetType}
+                onClose={handleCloseDialog}
+            />
             <div>
                 {
                     isLoading ? (
