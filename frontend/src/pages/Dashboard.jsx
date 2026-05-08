@@ -1,3 +1,4 @@
+import BetDialog from "@/components/BetDialog"
 import GameCard from "@/components/GameCard"
 import { Button } from "@/components/ui/button.jsx"
 import { getGames } from "@/services/gamesService"
@@ -52,6 +53,11 @@ function Dashboard() {
         setSelectedBetType(betType)
     }
 
+    const handleCloseDialog = () => {
+        setSelectedGame(null)
+        setSelectedBetType(null)
+    }
+
     return (
         <div className='min-h-screen p-6'>
             <div className="flex justify-between items-center mb-6">
@@ -59,6 +65,7 @@ function Dashboard() {
                 <p>${user?.balance?.toFixed(2)}</p>
                 <Button onClick={handleLogout} variant="outline">Logout</Button>
             </div>
+            <BetDialog selectedGame={selectedGame} selectedBetType={selectedBetType} onClose={handleCloseDialog}/>
             <div>
                 {
                     isLoading ? (
