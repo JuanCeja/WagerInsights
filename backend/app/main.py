@@ -55,7 +55,7 @@ def auto_sync_all_sports_and_games():
     try:
         for sport in sports:
             result = admin._sync_single_sport(sport, db)
-            print(f"{sport}: {result['created']} created, {result['updated']} updated")
+            print(f"{sport}: {result.get('created', 0)} created, {result.get('updated', 0)} updated")
     finally:
         db.close()
         print("=== AUTO-SYNC JOB COMPLETE ===\n")
