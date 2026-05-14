@@ -45,7 +45,6 @@ def auto_sync_all_sports_and_games():
         "americanfootball_ncaaf",
         "americanfootball_ufl",
         "baseball_mlb",
-        "soccer_epl",
         "soccer_mexico_ligamx",
         "soccer_uefa_champs_league"
     ]

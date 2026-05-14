@@ -12,13 +12,14 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose }) => {
 
     const odds = selectedBetType === "home" ? selectedGame?.home_team_odds : selectedGame?.away_team_odds
 
-    const handleSubmit = () => {
-        setIsLoading(true)
+    const handleSubmit = async () => {
         try {
-            placeBet({gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount)})
+            setErrorMessage("")
+            setIsLoading(true)
+            await placeBet({ gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount) })
             onClose()
-        } catch(error) {
-            setErrorMessage(error) 
+        } catch (error) {
+            setErrorMessage(error.response?.data?.detail || "Failed to place bet")
         } finally {
             setIsLoading(false)
         }
@@ -41,10 +42,11 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose }) => {
                     onChange={(e) => setBetAmount(e.target.value)}
                 />
                 <p>Potential Payout: ${calculatePayout(betAmount, odds)}</p>
-                {
-                    isLoading ? <Button onClick={handleSubmit}>Place Bet</Button>
-                    :  <p color="red"> {errorMessage} </p>
-                }
+
+                <Button onClick={handleSubmit} disabled={isLoading}>
+                    {isLoading ? "Placing bet..." : "Place Bet"}
+                </Button>
+                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </DialogContent>
         </Dialog>
     )
