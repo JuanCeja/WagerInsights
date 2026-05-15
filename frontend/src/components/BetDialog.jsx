@@ -5,7 +5,7 @@ import { placeBet } from "@/services/betsService"
 import { calculatePayout } from "@/utils/betCalculator.js"
 import { useState } from "react"
 
-const BetDialog = ({ selectedGame, selectedBetType, onClose }) => {
+const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
     const [betAmount, setBetAmount] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
@@ -17,6 +17,7 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose }) => {
             setErrorMessage("")
             setIsLoading(true)
             await placeBet({ gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount) })
+            onBetPlaced()
             onClose()
         } catch (error) {
             setErrorMessage(error.response?.data?.detail || "Failed to place bet")

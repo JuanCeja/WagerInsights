@@ -16,6 +16,16 @@ function Dashboard() {
 
     const navigate = useNavigate()
 
+    async function getCurrentUserLoggedIn() {
+        try {
+            const userData = await getCurrentUser()
+            setUser(userData)
+        } catch (error) {
+            localStorage.removeItem("token")
+            navigate("/login")
+        }
+    }
+
     useEffect(() => {
         async function fetchGames() {
             try {
@@ -28,20 +38,10 @@ function Dashboard() {
             }
         }
 
-        async function getCurrentUserLoggedIn() {
-            try {
-                const userData = await getCurrentUser()
-                setUser(userData)
-            } catch (error) {
-                localStorage.removeItem("token")
-                navigate("/login")
-            }
-
-        }
-
         fetchGames()
         getCurrentUserLoggedIn()
     }, [])
+
 
     const handleLogout = () => {
         localStorage.removeItem("token")
@@ -70,6 +70,7 @@ function Dashboard() {
                 selectedGame={selectedGame}
                 selectedBetType={selectedBetType}
                 onClose={handleCloseDialog}
+                onBetPlaced={getCurrentUserLoggedIn}
             />
             <div>
                 {

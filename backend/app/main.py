@@ -22,7 +22,8 @@ def auto_settle_all_sports():
         "baseball_mlb",
         "soccer_epl",
         "soccer_mexico_ligamx",
-        "soccer_uefa_champs_league"
+        "soccer_uefa_champs_league",
+        "americanfootball_nfl"
     ]
     
     db = SessionLocal()
