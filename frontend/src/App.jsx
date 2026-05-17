@@ -2,6 +2,7 @@ import Login from "@/pages/Login"
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
+import MyBets from "./pages/MyBets"
 import Register from "./pages/Register"
 
 function App() {
@@ -17,6 +18,13 @@ function App() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+
+      <Route path='/my-bets'
+        element={
+          <ProtectedRoute>
+            <MyBets />
           </ProtectedRoute>
         } />
 

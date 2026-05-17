@@ -18,7 +18,7 @@ export async function placeBet({ gameId, betType, betAmount }) {
     return response.data
 }
 
-export async function getMyBets({ status, betType }) {
+export async function getMyBets({ status, betType } = {}) {
     const token = localStorage.getItem("token")
     const response = await axios.get(`${API_BASE_URL}/bets`,
         {
