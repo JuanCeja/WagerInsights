@@ -1,5 +1,5 @@
+import Navbar from "@/components/Navbar"
 import { getMyBets } from "@/services/betsService"
-
 import { useEffect, useState } from "react"
 
 const MyBets = () => {
@@ -24,6 +24,7 @@ const MyBets = () => {
 
     return (
         <>
+        <Navbar />
             <h1>My Bets</h1>
 
             {isLoading && <p>Fetching Games</p>}
