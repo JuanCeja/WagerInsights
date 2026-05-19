@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useUser } from "@/contexts/UserContext"
 import { login } from "@/services/authService"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+
 
 function Login() {
 
@@ -14,6 +16,8 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
 
+    const { refreshUser } = useUser()
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
@@ -21,6 +25,7 @@ function Login() {
             setIsLoading(true)
             const token = await login(usernameOrEmail, password)
             localStorage.setItem("token", token.access_token)
+            await refreshUser()
             navigate("/dashboard")
         } catch (error) {
             setErrorMessage("Incorrect email/username or password")
@@ -57,6 +62,11 @@ function Login() {
                 <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                 </Button>
+
+                <p className="text-sm text-center">
+                    Don't have an account?{" "}
+                    <Link to="/register" className="text-blue-500 underline">Sign up</Link>
+                </p>
 
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </form>

@@ -8,18 +8,13 @@ import Register from "./pages/Register"
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
       <Route path='/login' element={<Login />} />
 
       <Route path='/register' element={<Register />} />
 
-      <Route path='/dashboard'
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
+      <Route path='/dashboard' element={<Dashboard />} />
 
       <Route path='/my-bets'
         element={

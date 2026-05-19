@@ -21,6 +21,12 @@ export function UserProvider({ children }) {
     }
 
     useEffect(() => {
+        const token = localStorage.getItem("token")
+
+        if (!token) {
+            setIsLoading(false)
+            return
+        }
         refreshUser()
     }, [])
 

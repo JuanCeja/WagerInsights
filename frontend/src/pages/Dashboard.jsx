@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar"
 import { useUser } from "@/contexts/UserContext"
 import { getGames } from "@/services/gamesService"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 function Dashboard() {
     const [games, setGames] = useState([])
@@ -12,7 +13,9 @@ function Dashboard() {
     const [selectedGame, setSelectedGame] = useState(null)
     const [selectedBetType, setSelectedBetType] = useState(null)
 
-    const { refreshUser } = useUser()
+    const navigate = useNavigate()
+
+    const { refreshUser, user } = useUser()
 
     useEffect(() => {
         async function fetchGames() {
@@ -31,6 +34,11 @@ function Dashboard() {
 
 
     const handleBetClick = (game, betType) => {
+        if (!user) {
+            navigate("/login")
+            return
+        }
+
         setSelectedGame(game)
         setSelectedBetType(betType)
     }

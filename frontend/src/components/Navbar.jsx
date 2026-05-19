@@ -16,9 +16,29 @@ const Navbar = () => {
         <nav>
             <h1>WagerInsights</h1>
             <Link to="/dashboard">Dashboard</Link>
-            <Link to="/my-bets">My Bets</Link>
-            <p>Balance: ${user?.balance?.toFixed(2)}</p>
-            <Button onClick={handleLogout}>Logout</Button>
+
+            {user ? (
+                <div>
+
+                    <Link to="/my-bets">My Bets</Link>
+                    <p>Balance: ${user?.balance?.toFixed(2)}</p>
+                    <Button onClick={handleLogout}>Logout</Button>
+                </div>
+            ) : (
+                <div>
+
+                    <Link to="/login">
+                        <Button variant="outline">Login</Button>
+                    </Link>
+
+
+                    <Link to="/register">
+                        <Button>Register</Button>
+                    </Link>
+
+                </div>
+            )
+            }
         </nav>
     )
 }
