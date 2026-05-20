@@ -8,7 +8,7 @@ from app.auth import hash_password
 from app.utils.odds_parser import parse_api_game_to_model
 from app.utils.scores_parser import parse_winner_from_scores
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.utils.bet_calculator import calculate_payout
 
@@ -152,7 +152,7 @@ def get_user_bets(
     bet_type: Optional[str] = None
     ):
     
-    query = db.query(models.Bet).filter(models.Bet.user_id == user_id)
+    query = db.query(models.Bet).options(joinedload(models.Bet.game)).filter(models.Bet.user_id == user_id)
     
     if status is not None:
         query = query.filter(models.Bet.status == status)

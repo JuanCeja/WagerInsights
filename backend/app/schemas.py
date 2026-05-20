@@ -61,7 +61,7 @@ class GameResponse(GameBase):
     updated_at: Optional[datetime]
     
     class Config:
-        from_attributes: True
+        from_attributes = True
 
 
 # ---------------------- BET SCHEMAS ----------------------
@@ -82,9 +82,10 @@ class BetResponse(BetCreate):
     created_at: datetime
     settled_at: Optional[datetime]
     updated_at: Optional[datetime]
+    game: GameResponse
     
     class Config:
-        from_attributes: True
+        from_attributes = True
 
 
 # ---------------------- ADMIN SCHEMAS ----------------------
