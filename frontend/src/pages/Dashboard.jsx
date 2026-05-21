@@ -1,6 +1,7 @@
 import BetDialog from "@/components/BetDialog"
 import GameCard from "@/components/GameCard"
 import Navbar from "@/components/Navbar"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useUser } from "@/contexts/UserContext"
 import { getGames } from "@/services/gamesService"
 import { useEffect, useState } from "react"
@@ -12,15 +13,22 @@ function Dashboard() {
     const [errorMessage, setErrorMessage] = useState("")
     const [selectedGame, setSelectedGame] = useState(null)
     const [selectedBetType, setSelectedBetType] = useState(null)
+    const [selectedSport, setSelectedSport] = useState("all")
 
     const navigate = useNavigate()
 
     const { refreshUser, user } = useUser()
 
+    const sports = ["NBA", "NFL", "MLB", "NHL", "NCAAF", "UFL", "EPL", "Liga MX", "UEFA Champions League"]
+
     useEffect(() => {
         async function fetchGames() {
+            const filters = {status: "upcoming"}
             try {
-                const data = await getGames({ status: "upcoming" })
+                if (selectedSport !== "all") {
+                    filters.sport = selectedSport
+                }
+                const data = await getGames(filters)
                 setGames(data)
             } catch (error) {
                 setErrorMessage("There is an issue retrieving games")
@@ -30,7 +38,7 @@ function Dashboard() {
         }
 
         fetchGames()
-    }, [])
+    }, [selectedSport])
 
 
     const handleBetClick = (game, betType) => {
@@ -51,6 +59,19 @@ function Dashboard() {
     return (
         <>
             <Navbar />
+
+            <Select value={selectedSport} onValueChange={setSelectedSport}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Filter by sport" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="all">All Sports</SelectItem>
+                {sports.map((sport) => (
+                    <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                ))}
+                </SelectContent>
+            </Select>
+
             <div className='min-h-screen p-6'>
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Dashboard</h1>
