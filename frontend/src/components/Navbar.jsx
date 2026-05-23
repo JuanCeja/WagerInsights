@@ -13,33 +13,29 @@ const Navbar = () => {
     }
 
     return (
-        <nav>
-            <h1>WagerInsights</h1>
-            <Link to="/dashboard">Dashboard</Link>
+<nav className="border-b">
+    <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+            <h1 className="text-xl font-bold">WagerInsights</h1>
+            <Link to="/dashboard" className="text-sm hover:underline">Dashboard</Link>
+            {user && <Link to="/my-bets" className="text-sm hover:underline">My Bets</Link>}
+        </div>
 
+        <div className="flex items-center gap-4">
             {user ? (
-                <div>
-
-                    <Link to="/my-bets">My Bets</Link>
-                    <p>Balance: ${user?.balance?.toFixed(2)}</p>
-                    <Button onClick={handleLogout}>Logout</Button>
-                </div>
+                <>
+                    <span className="text-sm font-medium">${user?.balance?.toFixed(2)}</span>
+                    <Button onClick={handleLogout} variant="outline" size="sm">Logout</Button>
+                </>
             ) : (
-                <div>
-
-                    <Link to="/login">
-                        <Button variant="outline">Login</Button>
-                    </Link>
-
-
-                    <Link to="/register">
-                        <Button>Register</Button>
-                    </Link>
-
-                </div>
-            )
-            }
-        </nav>
+                <>
+                    <Link to="/login"><Button variant="outline" size="sm">Login</Button></Link>
+                    <Link to="/register"><Button size="sm">Register</Button></Link>
+                </>
+            )}
+        </div>
+    </div>
+</nav>
     )
 }
 

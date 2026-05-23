@@ -61,22 +61,24 @@ function Dashboard() {
         <>
             <Navbar />
 
-            <Select value={selectedSport} onValueChange={setSelectedSport}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Filter by sport" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Sports</SelectItem>
-                    {sports.map((sport) => (
-                        <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-
-            <div className='min-h-screen p-6'>
+            <div className="max-w-6xl mx-auto px-6 py-8">
+                {/* Header row: title on left, sport filter on right */}
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Dashboard</h1>
+
+                    <Select value={selectedSport} onValueChange={setSelectedSport}>
+                        <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Filter by sport" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Sports</SelectItem>
+                            {sports.map((sport) => (
+                                <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
+
                 <BetDialog
                     key={selectedGame?.id}
                     selectedGame={selectedGame}
@@ -84,25 +86,24 @@ function Dashboard() {
                     onClose={handleCloseDialog}
                     onBetPlaced={refreshUser}
                 />
-                <div>
-                    {
-                        isLoading ? (
-                            <p>Loading games...</p>
-                        )
-                            : errorMessage ? (
-                                <p className="text-red-500">{errorMessage}</p>
-                            ) : games.length === 0 ? (
-                                <div className="text-center py-12">
-                                    <CalendarX className="mx-auto h-12 w-12 text-gray-400" />
-                                    <h3 className="mt-4 text-lg font-semibold">No upcoming games</h3>
-                                    <p className="text-gray-500 mt-1">Try selecting a different sport.</p>
-                                </div>
-                            ) : (
-                                games.map((game) => (
-                                    <GameCard key={game.id} game={game} onBetClick={handleBetClick} />
-                                ))
-                            )
-                    }
+
+                {/* Games list */}
+                <div className="flex flex-col gap-4">
+                    {isLoading ? (
+                        <p>Loading games...</p>
+                    ) : errorMessage ? (
+                        <p className="text-red-500">{errorMessage}</p>
+                    ) : games.length === 0 ? (
+                        <div className="text-center py-12">
+                            <CalendarX className="mx-auto h-12 w-12 text-gray-400" />
+                            <h3 className="mt-4 text-lg font-semibold">No upcoming games</h3>
+                            <p className="text-gray-500 mt-1">Try selecting a different sport.</p>
+                        </div>
+                    ) : (
+                        games.map((game) => (
+                            <GameCard key={game.id} game={game} onBetClick={handleBetClick} />
+                        ))
+                    )}
                 </div>
             </div>
         </>
