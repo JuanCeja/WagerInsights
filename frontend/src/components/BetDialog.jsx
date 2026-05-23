@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { placeBet } from "@/services/betsService"
 import { calculatePayout } from "@/utils/betCalculator.js"
 import { useState } from "react"
+import { toast } from "sonner"
 
 const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
     const [betAmount, setBetAmount] = useState("")
@@ -11,12 +12,14 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
     const [errorMessage, setErrorMessage] = useState("")
 
     const odds = selectedBetType === "home" ? selectedGame?.home_team_odds : selectedGame?.away_team_odds
+    const teamBetOn = selectedBetType === "home" ? selectedGame?.home_team : selectedGame?.away_team
 
     const handleSubmit = async () => {
         try {
             setErrorMessage("")
             setIsLoading(true)
             await placeBet({ gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount) })
+            toast.success(`Bet placed! $${betAmount} on ${teamBetOn}`)
             onBetPlaced()
             onClose()
         } catch (error) {
