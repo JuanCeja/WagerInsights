@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getMyBets } from "@/services/betsService"
 import { useEffect, useState } from "react"
@@ -12,6 +13,25 @@ const MyBets = () => {
     const filteredBets = activeTab === "all"
         ? userBets
         : userBets.filter(bet => bet.status === activeTab)
+
+    const totalBets = userBets.length
+    const totalWagered = userBets.reduce((sum, bet) => sum + bet.bet_amount, 0)
+
+    const settledBets = userBets.filter(bet => bet.status === "won" || bet.status === "lost")
+    const wonBets = userBets.filter(bet => bet.status === "won")
+    const winRate = settledBets.length > 0
+        ? (wonBets.length / settledBets.length) * 100
+        : 0
+
+    const netProfitLoss = userBets.reduce((net, bet) => {
+        if (bet.status === "won") {
+            return net + (bet.potential_payout - bet.bet_amount)
+        }
+        if (bet.status === "lost") {
+            return net - bet.bet_amount
+        }
+        return net
+    }, 0)
 
     useEffect(() => {
         async function fetchUserBets() {
@@ -36,14 +56,56 @@ const MyBets = () => {
     }
 
     return (
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <>
-                <Navbar />
-                <h1>My Bets</h1>
+        <>
+            <Navbar />
+            <div className="p-6">
+                <h1 className="text-3xl font-bold mb-6">My Bets</h1>
 
                 {isLoading && <p>Fetching Games</p>}
                 {errorMessage && <p>{errorMessage}</p>}
 
+                {/* Stats cards — ONLY these are in the grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Total Bets</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-2xl font-bold">{totalBets}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Total Wagered</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-2xl font-bold">${totalWagered.toFixed(2)}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Win Rate</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-2xl font-bold">{winRate.toFixed(1)}%</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Net Profit/Loss</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className={`text-2xl font-bold ${netProfitLoss >= 0 ? "text-green-600" : "text-red-500"}`}>
+                                ${netProfitLoss.toFixed(2)}
+                            </p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Tabs — ONE Tabs, containing both TabsList and TabsContent */}
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                     <TabsList>
                         <TabsTrigger value="all">All</TabsTrigger>
@@ -51,15 +113,12 @@ const MyBets = () => {
                         <TabsTrigger value="won">Won</TabsTrigger>
                         <TabsTrigger value="lost">Lost</TabsTrigger>
                     </TabsList>
-                </Tabs>
 
-                <TabsContent value={activeTab}>
-                    {
-                        filteredBets.length === 0 ? (
+                    <TabsContent value={activeTab}>
+                        {filteredBets.length === 0 ? (
                             <p>No bets in this category</p>
                         ) : (
                             filteredBets.map((bet) => {
-
                                 const teamBetOn = bet.bet_type === "home"
                                     ? bet.game.home_team
                                     : bet.game.away_team
@@ -79,9 +138,10 @@ const MyBets = () => {
                                 )
                             })
                         )}
-                </TabsContent>
-            </>
-        </Tabs>
+                    </TabsContent>
+                </Tabs>
+            </div>
+        </>
     )
 }
 
