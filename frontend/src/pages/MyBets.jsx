@@ -1,8 +1,11 @@
 import Navbar from "@/components/Navbar"
+import { Button } from "@/components/ui/button.jsx"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getMyBets } from "@/services/betsService"
+import { Ticket } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 
 const MyBets = () => {
     const [errorMessage, setErrorMessage] = useState("")
@@ -116,7 +119,14 @@ const MyBets = () => {
 
                     <TabsContent value={activeTab}>
                         {filteredBets.length === 0 ? (
-                            <p>No bets in this category</p>
+                            <div className="text-center py-12">
+                                <Ticket className="mx-auto h-12 w-12 text-gray-400" />
+                                <h3 className="mt-4 text-lg font-semibold">No bets yet</h3>
+                                <p className="text-gray-500 mt-1">Place your first bet to see it here.</p>
+                                <Link to="/dashboard">
+                                    <Button className="mt-4">Browse Games</Button>
+                                </Link>
+                            </div>
                         ) : (
                             filteredBets.map((bet) => {
                                 const teamBetOn = bet.bet_type === "home"

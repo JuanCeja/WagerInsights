@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useUser } from "@/contexts/UserContext"
 import { getGames } from "@/services/gamesService"
+import { CalendarX } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
@@ -23,7 +24,7 @@ function Dashboard() {
 
     useEffect(() => {
         async function fetchGames() {
-            const filters = {status: "upcoming"}
+            const filters = { status: "upcoming" }
             try {
                 if (selectedSport !== "all") {
                     filters.sport = selectedSport
@@ -65,10 +66,10 @@ function Dashboard() {
                     <SelectValue placeholder="Filter by sport" />
                 </SelectTrigger>
                 <SelectContent>
-                <SelectItem value="all">All Sports</SelectItem>
-                {sports.map((sport) => (
-                    <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                ))}
+                    <SelectItem value="all">All Sports</SelectItem>
+                    {sports.map((sport) => (
+                        <SelectItem key={sport} value={sport}>{sport}</SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
 
@@ -91,7 +92,11 @@ function Dashboard() {
                             : errorMessage ? (
                                 <p className="text-red-500">{errorMessage}</p>
                             ) : games.length === 0 ? (
-                                <p>No upcoming games</p>
+                                <div className="text-center py-12">
+                                    <CalendarX className="mx-auto h-12 w-12 text-gray-400" />
+                                    <h3 className="mt-4 text-lg font-semibold">No upcoming games</h3>
+                                    <p className="text-gray-500 mt-1">Try selecting a different sport.</p>
+                                </div>
                             ) : (
                                 games.map((game) => (
                                     <GameCard key={game.id} game={game} onBetClick={handleBetClick} />
