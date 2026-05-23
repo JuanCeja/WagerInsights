@@ -61,13 +61,13 @@ const MyBets = () => {
     return (
         <>
             <Navbar />
-            <div className="p-6">
+            <div className="max-w-6xl mx-auto px-6 py-8">
                 <h1 className="text-3xl font-bold mb-6">My Bets</h1>
 
                 {isLoading && <p>Fetching Games</p>}
                 {errorMessage && <p>{errorMessage}</p>}
 
-                {/* Stats cards — ONLY these are in the grid */}
+                {/* Stats cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <Card>
                         <CardHeader>
@@ -108,7 +108,7 @@ const MyBets = () => {
                     </Card>
                 </div>
 
-                {/* Tabs — ONE Tabs, containing both TabsList and TabsContent */}
+                {/* Tabs */}
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                     <TabsList>
                         <TabsTrigger value="all">All</TabsTrigger>
@@ -117,7 +117,7 @@ const MyBets = () => {
                         <TabsTrigger value="lost">Lost</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value={activeTab}>
+                    <TabsContent value={activeTab} className="mt-4">
                         {filteredBets.length === 0 ? (
                             <div className="text-center py-12">
                                 <Ticket className="mx-auto h-12 w-12 text-gray-400" />
@@ -134,16 +134,41 @@ const MyBets = () => {
                                     : bet.game.away_team
 
                                 return (
-                                    <div key={bet.id}>
-                                        <h3>Game Matchup: {bet.game.away_team} @ {bet.game.home_team}</h3>
-                                        <p>{new Date(bet.game.game_date).toLocaleString()}</p>
-                                        <p>{bet.game.sport}</p>
-                                        <p>Team bet on: {teamBetOn}</p>
-                                        <p>Bet Amount: ${bet.bet_amount}</p>
-                                        <p>Odds At Bet: {bet.odds_at_bet}</p>
-                                        <p className={`capitalize ${statusColor(bet.status)}`}>
-                                            Status: {bet.status}
+                                    <div key={bet.id} className="border rounded-lg p-4 mb-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="font-semibold">{bet.game.away_team} @ {bet.game.home_team}</p>
+                                            <span className={`text-sm font-semibold capitalize ${statusColor(bet.status)}`}>
+                                                {bet.status}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-sm text-gray-500 mb-3">
+                                            {bet.game.sport} • {new Date(bet.game.game_date).toLocaleString()}
                                         </p>
+
+                                        <div className="flex justify-between text-sm">
+                                            <div>
+                                                <span className="text-gray-500">Pick: </span>
+                                                <span className="font-medium">{teamBetOn}</span>
+                                                <span className="text-gray-400"> ({bet.odds_at_bet > 0 ? `+${bet.odds_at_bet}` : bet.odds_at_bet})</span>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-500">Wager: </span>
+                                                <span className="font-medium">${bet.bet_amount}</span>
+                                            </div>
+                                        </div>
+
+                                        {bet.status === "won" && (
+                                            <p className="text-sm text-green-600 font-medium mt-2">
+                                                Payout: ${bet.potential_payout.toFixed(2)} (+${(bet.potential_payout - bet.bet_amount).toFixed(2)} profit)
+                                            </p>
+                                        )}
+
+                                        {bet.status === "lost" && (
+                                            <p className="text-sm text-red-500 font-medium mt-2">
+                                                Lost: ${bet.bet_amount.toFixed(2)}
+                                            </p>
+                                        )}
                                     </div>
                                 )
                             })
