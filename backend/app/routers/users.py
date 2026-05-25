@@ -4,6 +4,7 @@ from app.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from sqlalchemy import func, case
 
 # Router instance
 router = APIRouter(
@@ -77,3 +78,37 @@ def get_current_user_profile(current_user: models.User = Depends(get_current_use
     Requires valid JWT token in Authorization header.
     """
     return current_user
+
+@router.get("/leaderboard", response_model=list[schemas.LeaderBoardEntry])
+def get_leaderboard(db: Session = Depends(get_db)):
+    leaderboard = []
+    
+    results = (
+        db.query(
+            models.User,
+            func.count(case((models.Bet.status == "won", 1))).label("won_bets"),
+            func.count(case((models.Bet.status != "pending", 1))).label("total_settled_bets")
+        )
+        .outerjoin(models.Bet, models.Bet.user_id == models.User.id)
+        .group_by(models.User.id).all())
+    
+    for row in results:
+        user = row.User
+        won = row.won_bets
+        total = row.total_settled_bets
+        
+        if total == 0:
+            win_rate = 0
+        else:
+            win_rate = (won / total) * 100
+            
+        leaderboard.append(schemas.LeaderBoardEntry(
+            username = user.username,
+            balance = user.balance,
+            win_rate = win_rate,
+            total_bets = total
+        ))
+        
+    leaderboard.sort(key = lambda e: (e.win_rate, e.total_bets), reverse = True)
+    
+    return leaderboard

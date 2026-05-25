@@ -27,6 +27,12 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     username_or_email: str
     password: str
+    
+class LeaderBoardEntry(BaseModel):
+    username: str
+    balance: float
+    win_rate: float
+    total_bets: int
 
 # ---------------------- TOKEN SCHEMAS ----------------------
 
