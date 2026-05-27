@@ -18,6 +18,7 @@ const Navbar = () => {
         <div className="flex items-center gap-6">
             <h1 className="text-xl font-bold">WagerInsights</h1>
             <Link to="/dashboard" className="text-sm hover:underline">Dashboard</Link>
+            <Link to="/leaderboard" className="text-sm hover:underline">Leaderboard</Link>
             {user && <Link to="/my-bets" className="text-sm hover:underline">My Bets</Link>}
         </div>
 
