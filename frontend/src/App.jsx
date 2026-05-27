@@ -3,6 +3,7 @@ import Login from "@/pages/Login"
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from "./components/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
+import Leaderboard from "./pages/Leaderboard"
 import MyBets from "./pages/MyBets"
 import Register from "./pages/Register"
 
@@ -17,6 +18,8 @@ function App() {
         <Route path='/register' element={<Register />} />
 
         <Route path='/dashboard' element={<Dashboard />} />
+
+        <Route path='/leaderboard' element={<Leaderboard />} />
 
         <Route path='/my-bets'
           element={
