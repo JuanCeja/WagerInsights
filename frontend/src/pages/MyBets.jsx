@@ -6,6 +6,7 @@ import { getMyBets } from "@/services/betsService"
 import { Ticket } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 const MyBets = () => {
     const [errorMessage, setErrorMessage] = useState("")
@@ -22,6 +23,19 @@ const MyBets = () => {
 
     const settledBets = userBets.filter(bet => bet.status === "won" || bet.status === "lost")
     const wonBets = userBets.filter(bet => bet.status === "won")
+    const lostBets = userBets.filter((bet) => bet.status === "lost")
+
+    const pieChartData = [
+        {
+            name: "Won",
+            value: wonBets.length
+        },
+        {
+            name: "Lost",
+            value: lostBets.length
+        }
+    ]
+
     const winRate = settledBets.length > 0
         ? (wonBets.length / settledBets.length) * 100
         : 0
@@ -107,6 +121,38 @@ const MyBets = () => {
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Win/Loss Pie Chart */}
+                {settledBets.length > 0 &&
+                    (<Card className="mb-6">
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Win / Loss Breakdown</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie
+                                        data={pieChartData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={80}
+                                        label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                                    >
+                                        {pieChartData.map((entry) => (
+                                            <Cell
+                                                key={entry.name}
+                                                fill={entry.name === "Won" ? "#a855f7" : "#475569"}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>)}
 
                 {/* Tabs */}
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
