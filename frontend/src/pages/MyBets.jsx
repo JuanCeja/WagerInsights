@@ -2,11 +2,23 @@ import Navbar from "@/components/Navbar"
 import { Button } from "@/components/ui/button.jsx"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useUser } from "@/contexts/UserContext"
 import { getMyBets } from "@/services/betsService"
 import { Ticket } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
+import {
+    CartesianGrid,
+    Cell,
+    Legend,
+    Line,
+    LineChart,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis, YAxis
+} from "recharts"
 
 const MyBets = () => {
     const [errorMessage, setErrorMessage] = useState("")
@@ -14,16 +26,42 @@ const MyBets = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [activeTab, setActiveTab] = useState("all")
 
+    const { user } = useUser()
+    const userStartingBalance = 1000
+
     const filteredBets = activeTab === "all"
         ? userBets
         : userBets.filter(bet => bet.status === activeTab)
 
     const totalBets = userBets.length
     const totalWagered = userBets.reduce((sum, bet) => sum + bet.bet_amount, 0)
-
     const settledBets = userBets.filter(bet => bet.status === "won" || bet.status === "lost")
     const wonBets = userBets.filter(bet => bet.status === "won")
     const lostBets = userBets.filter((bet) => bet.status === "lost")
+
+    const sortedUserBets = [...settledBets].sort((a, b) => new Date(a.game.game_date) - new Date(b.game.game_date))
+
+    const balanceChartData = user
+        ? sortedUserBets.reduce((chartData, bet) => {
+            const previousBalance = chartData[chartData.length - 1].balance
+            let newBalance = previousBalance
+
+            if (bet.status === "won") {
+                newBalance += (bet.potential_payout - bet.bet_amount)
+            } else {
+                newBalance -= bet.bet_amount
+            }
+
+            chartData.push({
+                date: bet.game.game_date,
+                balance: newBalance
+            })
+            return chartData
+        }, [{
+            date: user.created_at,
+            balance: userStartingBalance
+        }])
+        : []
 
     const pieChartData = [
         {
@@ -49,6 +87,7 @@ const MyBets = () => {
         }
         return net
     }, 0)
+
 
     useEffect(() => {
         async function fetchUserBets() {
@@ -153,6 +192,45 @@ const MyBets = () => {
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>)}
+
+                {/* Balance Over Time */}
+                {balanceChartData.length > 1 && (
+                    <Card className="mb-6">
+                        <CardHeader>
+                            <CardTitle className="text-sm text-gray-500">Balance Over Time</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <LineChart data={balanceChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                    <XAxis
+                                        dataKey="date"
+                                        stroke="#94a3b8"
+                                        tickFormatter={(d) => new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                                    />
+                                    <YAxis
+                                        stroke="#94a3b8"
+                                        domain={["dataMin - 50", "dataMax + 50"]}
+                                        tickFormatter={(v) => `$${v.toFixed(0)}`}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155" }}
+                                        labelFormatter={(d) => new Date(d).toLocaleString()}
+                                        formatter={(v) => [`$${v.toFixed(2)}`, "Balance"]}
+                                    />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="balance"
+                                        stroke="#a855f7"
+                                        strokeWidth={2}
+                                        dot={{ r: 3, fill: "#a855f7" }}
+                                        activeDot={{ r: 5 }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Tabs */}
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
