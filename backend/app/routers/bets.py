@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app import auth, crud, models, schemas
+from app.api_clients.anthropic_client import bet_analyzer
 from app.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -50,3 +51,27 @@ def get_unique_bet(
         raise HTTPException(status_code=403, detail="Not authorized to view this bet")
     
     return bet
+
+@router.post("/analyze", response_model=schemas.AnalyzerResponse, status_code=status.HTTP_200_OK)
+def analyze_bet(
+    bet: schemas.BetAnalyzeRequest,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db)
+):
+    current_game = crud.get_game_by_id(db, bet.game_id)
+
+    if not current_game:
+        raise HTTPException(status_code=404, detail="Game does not exist")
+    
+    sport = current_game.sport
+    home_team = current_game.home_team
+    away_team = current_game.away_team
+    home_team_odds = current_game.home_team_odds
+    away_team_odds = current_game.away_team_odds
+    bet_amount = bet.bet_amount
+    bet_type = bet.bet_type
+    date = current_game.game_date
+
+    analysis_text = bet_analyzer(sport, home_team, away_team, bet_type, home_team_odds, away_team_odds, bet_amount, date)
+
+    return schemas.AnalyzerResponse(analysis=analysis_text)

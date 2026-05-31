@@ -105,3 +105,14 @@ class SettlementSummary(BaseModel):
     
 class BulkSyncRequest(BaseModel):
     sports: list[str]
+
+
+# ---------------------- ANALYZER SCHEMAS ----------------------
+
+class BetAnalyzeRequest(BaseModel):
+    game_id: int
+    bet_type: str
+    bet_amount: float
+
+class AnalyzerResponse(BaseModel):
+    analysis: str
