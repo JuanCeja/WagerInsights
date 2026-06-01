@@ -31,3 +31,21 @@ export async function getMyBets({ status, betType } = {}) {
     )
     return response.data
 }
+
+export async function analyzeBet({ gameId, betType, betAmount }) {
+    const token = localStorage.getItem("token")
+    const response = await axios.post(
+        `${API_BASE_URL}/bets/analyze`,
+        {
+            game_id: gameId,
+            bet_type: betType,
+            bet_amount: betAmount
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    )
+    return response.data
+}
