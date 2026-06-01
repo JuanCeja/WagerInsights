@@ -5,6 +5,7 @@ import { analyzeBet, placeBet } from "@/services/betsService"
 import { calculatePayout } from "@/utils/betCalculator.js"
 import { Loader2, Sparkles } from "lucide-react"
 import { useState } from "react"
+import ReactMarkdown from "react-markdown"
 import { toast } from "sonner"
 
 const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
@@ -90,9 +91,10 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
                 {analysisError && (
                     <p className="text-red-500 text-sm">{analysisError}</p>
                 )}
+
                 {analysisText && (
-                    <div className="max-h-64 overflow-y-auto text-sm whitespace-pre-wrap p-3 rounded-md bg-muted/40 border">
-                        {analysisText}
+                    <div className="max-h-64 overflow-y-auto text-sm p-3 rounded-md bg-muted/40 border prose prose-sm prose-invert max-w-none">
+                        <ReactMarkdown>{analysisText}</ReactMarkdown>
                     </div>
                 )}
 
