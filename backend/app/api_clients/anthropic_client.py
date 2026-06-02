@@ -32,9 +32,9 @@ def bet_analyzer(sport: str, home_team: str, away_team: str, bet_type: str, home
 
     3. **Home Field Advantage** — How significant is home field advantage for {home_team} in {sport}? Does it meaningfully impact this matchup?
 
-    4. **Injury & Lineup Context** — Note any historically known patterns about either team's roster. Do not speculate on current injury status you cannot verify; flag that the bettor should confirm current reports before placing.
+    4. **Injury & Lineup Context** — Use web search to look up current injury reports, suspensions, and lineup news for both teams heading into the game. Cite the sources you find. Note how any missing key players affect the matchup and this bet specifically.
 
-    5. **Team Form** — How have both teams been performing recently? Any trends worth noting?
+    5. **Team Form** — Use web search to find recent results (last 5-10 games), trends, and any momentum factors. How are both teams playing right now? Cite sources.
 
     6. **Recommendation** — Choose one: **Strong play (consider increasing)**, **Solid bet (proceed as planned)**, **Standard market bet (proceed if you like the matchup)**, **Marginal (reduce amount)**, or **Pass (avoid)**. Tie this directly to the rating you gave — a 5-6 is a "standard market bet," not a warning.
 
@@ -42,13 +42,16 @@ def bet_analyzer(sport: str, home_team: str, away_team: str, bet_type: str, home
     
     message = client.messages.create(
         model="claude-haiku-4-5",
-        max_tokens=1500,
+        max_tokens=8192,
         messages=[
             {
                 "role": "user",
                 "content": prompt
                 }
-            ]
+            ],
+            tools=[{"type": "web_search_20250305", "name": "web_search"}]
     )
 
-    return message.content[0].text
+    text_blocks = [block.text for block in message.content if block.type == "text"]
+    analysis_text = "".join(text_blocks)
+    return analysis_text
