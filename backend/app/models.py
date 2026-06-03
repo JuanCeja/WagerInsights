@@ -16,6 +16,7 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     bets = relationship("Bet", back_populates="user")
+    deposits = relationship("Deposit", back_populates="user")
     
 class Game(Base):
     __tablename__ = "games"
@@ -53,3 +54,15 @@ class Bet(Base):
     
     user = relationship("User", back_populates="bets")
     game = relationship("Game", back_populates="bets")
+
+class Deposit(Base):
+    __tablename__ = "deposits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    amount = Column(Float, nullable=False)
+    stripe_payment_intent_id = Column(String, unique=True, nullable=False)
+    status = Column(String, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="deposits")
