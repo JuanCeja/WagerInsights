@@ -116,3 +116,16 @@ class BetAnalyzeRequest(BaseModel):
 
 class AnalyzerResponse(BaseModel):
     analysis: str
+
+
+# ---------------------- DEPOSIT SCHEMAS ----------------------
+
+class DepositCreateRequest(BaseModel):
+    amount: float = Field(..., gt=0.50)
+
+class DepositCreateResponse(BaseModel):
+    payment_intent_id: str
+    client_secret: str
+
+class DepositConfirmRequest(BaseModel):
+    payment_intent_id: str
