@@ -5,12 +5,11 @@ from typing import Optional
 from app import models, schemas
 from app.api_clients.odds_api_client import OddsAPIClient
 from app.auth import hash_password
+from app.utils.bet_calculator import calculate_payout
 from app.utils.odds_parser import parse_api_game_to_model
 from app.utils.scores_parser import parse_winner_from_scores
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
-
-from app.utils.bet_calculator import calculate_payout
 
 # -------------------- User CRUD Operations --------------------
 
@@ -345,3 +344,31 @@ def auto_settle_completed_games(db: Session, sport: str, api_key: str) -> dict:
         "games_settled": settled_count,
         "errors": errors
     }
+
+
+
+# -------------------- Deposit CRUD Operations --------------------
+
+
+def create_deposit_and_credit_user(db: Session, amount: float, user_id: int, stripe_payment_intent_id: str):
+    user = get_user_by_id(db, user_id)
+    
+    user.balance += amount
+
+    db_deposit = models.Deposit(
+        user_id = user.id,
+        amount = amount,
+        stripe_payment_intent_id = stripe_payment_intent_id,
+        status = "succeeded",
+    )
+
+    db.add(db_deposit)
+
+    db.commit()
+    db.refresh(user)
+    db.refresh(db_deposit)
+
+    return user
+
+def get_deposit_by_stripe_id(db: Session, payment_intent_id: str):
+    return db.query(models.Deposit).filter(models.Deposit.stripe_payment_intent_id == payment_intent_id).first()

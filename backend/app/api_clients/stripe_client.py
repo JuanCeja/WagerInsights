@@ -19,3 +19,13 @@ def create_payment_intent(amount: float, user_id: int):
         "status": intent.status,
         "metadata": intent.metadata,
     }
+
+def retrieve_payment_intent(intent_id: str):
+    intent = stripe.PaymentIntent.retrieve(intent_id)
+
+    return {
+        "id": intent.id,
+        "status": intent.status,
+        "amount": intent.amount,
+        "metadata": intent.metadata
+    }

@@ -1,9 +1,9 @@
-from datetime import datetime
 import os
+from datetime import datetime
 
 from app import crud
 from app.database import Base, SessionLocal, engine
-from app.routers import admin, bets, games, users
+from app.routers import admin, bets, deposits, games, users
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -99,6 +99,7 @@ app.include_router(users.router)
 app.include_router(bets.router)
 app.include_router(games.router)
 app.include_router(admin.router)
+app.include_router(deposits.router)
 
 @app.get("/")
 def read_root():
