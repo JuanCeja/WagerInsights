@@ -20,7 +20,7 @@ function Dashboard() {
 
     const { refreshUser, user } = useUser()
 
-    const sports = ["NBA", "NFL", "MLB", "NHL", "NCAAF", "UFL", "EPL", "Liga MX", "UEFA Champions League"]
+    const sports = ["NBA", "NFL", "MLB", "NHL", "NCAAF", "UFL", "EPL", "Liga MX", "UEFA Champions League", "FIFA World Cup"]
 
     useEffect(() => {
         async function fetchGames() {
