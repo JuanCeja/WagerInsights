@@ -20,6 +20,7 @@ const Navbar = () => {
             <Link to="/dashboard" className="text-sm hover:underline">Dashboard</Link>
             <Link to="/leaderboard" className="text-sm hover:underline">Leaderboard</Link>
             {user && <Link to="/my-bets" className="text-sm hover:underline">My Bets</Link>}
+            {user && <Link to="/deposit" className="text-sm hover:underline">Deposit</Link>}
         </div>
 
         <div className="flex items-center gap-4">
