@@ -79,15 +79,6 @@ def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_
         "successful": successful,
         "failed": failed
     }
-    
-@router.post("/sync_games/{sport}", status_code=status.HTTP_200_OK)
-def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
-    result = _sync_single_sport(sport, db)
-    
-    if not result.get("success", True):
-        raise HTTPException(status_code=500, detail=result.get("error", "Unknown error"))
-    
-    return result
 
 @router.post("/auto_settle_games/{sport}", status_code=status.HTTP_200_OK)
 def automatically_settle_games_in_db(sport: str, db: Session = Depends(get_db)):

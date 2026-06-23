@@ -82,13 +82,11 @@ scheduler.add_job(
     func=auto_sync_all_sports_and_games,
     trigger="interval",
     hours=12,
-    next_run_time=datetime.now()
 )
 scheduler.add_job(
     func=auto_settle_all_sports,
     trigger="interval",
     hours=1,
-    next_run_time=datetime.now()
 )
 
 @app.on_event("startup")
