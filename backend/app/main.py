@@ -24,7 +24,8 @@ def auto_settle_all_sports():
         "soccer_mexico_ligamx",
         "soccer_uefa_champs_league",
         "americanfootball_nfl",
-        "soccer_fifa_world_cup"
+        "soccer_fifa_world_cup",
+        "mma_mixed_martial_arts"
     ]
     
     db = SessionLocal()
@@ -47,9 +48,12 @@ def auto_sync_all_sports_and_games():
         "americanfootball_ncaaf",
         "americanfootball_ufl",
         "baseball_mlb",
+        "soccer_epl",
         "soccer_mexico_ligamx",
         "soccer_uefa_champs_league",
-        "soccer_fifa_world_cup"
+        "americanfootball_nfl",
+        "soccer_fifa_world_cup",
+        "mma_mixed_martial_arts"
     ]
     
     db = SessionLocal()
