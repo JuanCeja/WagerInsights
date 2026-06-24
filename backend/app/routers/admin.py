@@ -10,7 +10,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 load_dotenv()
-api_key = os.getenv("ODDS_API_KEY")
 
 router = APIRouter(
     prefix="/admin",
@@ -18,7 +17,7 @@ router = APIRouter(
 )
 
 @router.post("/games/settle_game/{game_id}", response_model=schemas.SettlementSummary, status_code=status.HTTP_200_OK)
-def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db: Session = Depends(get_db)):
+def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
     try:
         settled_game = crud.settle_game(db, game_id, game_update.winner)
         bets_settled = crud.settle_bets_for_game(db, game_id, game_update.winner)
@@ -44,7 +43,7 @@ def settle_game_and_bets(game_update: schemas.GameSettleUpdate, game_id:int, db:
     return summary
 
 @router.post("/sync_games/{sport}", status_code=status.HTTP_200_OK)
-def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
+def sync_games_from_api(sport: str, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
     result = _sync_single_sport(sport, db)
     
     if not result.get("success", True):
@@ -53,7 +52,8 @@ def sync_games_from_api(sport: str, db: Session = Depends(get_db)):
     return result
 
 @router.get("/available_sports", status_code=status.HTTP_200_OK)
-def available_sports():
+def available_sports(current_user: models.User = Depends(auth.get_admin_user)):
+    api_key = os.getenv("ODDS_API_KEY")
     client = OddsAPIClient(api_key)
     try:
         list_of_available_sports = client.get_sports()
@@ -62,7 +62,7 @@ def available_sports():
         raise HTTPException(status_code=500, detail=f"Failed to fetch sports: {str(e)}")
 
 @router.post("/bulk_sync_games", status_code=status.HTTP_200_OK)
-def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_db)):
+def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
     results = []
     
     
@@ -81,11 +81,13 @@ def bulk_sync_games(request: schemas.BulkSyncRequest, db: Session = Depends(get_
     }
 
 @router.post("/auto_settle_games/{sport}", status_code=status.HTTP_200_OK)
-def automatically_settle_games_in_db(sport: str, db: Session = Depends(get_db)):
+def automatically_settle_games_in_db(sport: str, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
+    api_key = os.getenv("ODDS_API_KEY")
     return crud.auto_settle_completed_games(db, sport, api_key)
 
 
 def _sync_single_sport(sport: str, db: Session) -> dict:
+    api_key = os.getenv("ODDS_API_KEY")
     if not api_key:
         return {
             "sport": sport,
@@ -96,7 +98,7 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
     created_games = 0
     updated_games = 0
     
-    client = OddsAPIClient(api_key=api_key)
+    client = OddsAPIClient(api_key)
     try:
         games = client.get_games(sport)
     except Exception as e:
@@ -133,7 +135,7 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
     }
 
 @router.post("/cleanup-stale-games")
-def cleanup_stale_games(db: Session = Depends(get_db)):
+def cleanup_stale_games(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
     """
     Mark games as 'expired' if they're older than 3 days and still 'upcoming'.
     These are games that auto-settle couldn't catch (outside The Odds API's 3-day window).
