@@ -23,7 +23,8 @@ def auto_settle_all_sports():
         "soccer_epl",
         "soccer_mexico_ligamx",
         "soccer_uefa_champs_league",
-        "americanfootball_nfl"
+        "americanfootball_nfl",
+        "soccer_fifa_world_cup"
     ]
     
     db = SessionLocal()
@@ -81,12 +82,12 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(
     func=auto_sync_all_sports_and_games,
     trigger="interval",
-    hours=12,
+    hours=12
 )
 scheduler.add_job(
     func=auto_settle_all_sports,
     trigger="interval",
-    hours=1,
+    hours=1
 )
 
 @app.on_event("startup")
