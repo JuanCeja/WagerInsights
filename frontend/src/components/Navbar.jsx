@@ -16,7 +16,14 @@ const Navbar = () => {
 <nav className="border-b">
     <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
-            <h1 className="text-xl font-bold">WagerInsights</h1>
+            <Link
+                to="/"
+                className="text-2xl tracking-tight hover:opacity-90 transition-opacity"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+                <span style={{ fontWeight: 700, color: '#a855f7' }}>Wager</span>
+                <span style={{ fontWeight: 500 }}>Insights</span>
+            </Link>
             <Link to="/dashboard" className="text-sm hover:underline">Dashboard</Link>
             <Link to="/leaderboard" className="text-sm hover:underline">Leaderboard</Link>
             {user && <Link to="/my-bets" className="text-sm hover:underline">My Bets</Link>}
