@@ -123,38 +123,38 @@ const MyBets = () => {
                 {/* Stats cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm text-gray-500">Total Bets</CardTitle>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Total Bets</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold">{totalBets}</p>
+                            <p className="text-4xl font-bold font-mono">{totalBets}</p>
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm text-gray-500">Total Wagered</CardTitle>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Total Wagered</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold">${totalWagered.toFixed(2)}</p>
+                            <p className="text-4xl font-bold font-mono">${totalWagered.toFixed(2)}</p>
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm text-gray-500">Win Rate</CardTitle>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Win Rate</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-2xl font-bold">{winRate.toFixed(1)}%</p>
+                            <p className="text-4xl font-bold font-mono">{winRate.toFixed(1)}%</p>
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardHeader>
-                            <CardTitle className="text-sm text-gray-500">Net Profit/Loss</CardTitle>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Net P/L</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className={`text-2xl font-bold ${netProfitLoss >= 0 ? "text-green-600" : "text-red-500"}`}>
+                            <p className={`text-4xl font-bold font-mono ${netProfitLoss >= 0 ? "text-green-600" : "text-red-500"}`}>
                                 ${netProfitLoss.toFixed(2)}
                             </p>
                         </CardContent>

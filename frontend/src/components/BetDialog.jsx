@@ -66,7 +66,12 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                 />
-                <p>Potential Payout: ${calculatePayout(betAmount, odds)}</p>
+                <p className="text-sm text-muted-foreground">
+                    Potential payout:{" "}
+                    <span className="font-mono font-bold text-xl text-foreground">
+                        ${calculatePayout(betAmount, odds)}
+                    </span>
+                </p>
 
                 {/* Analyze button */}
                 <Button
