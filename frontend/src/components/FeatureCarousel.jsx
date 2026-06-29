@@ -9,13 +9,13 @@ const slides = [
         subtext: "Backed by real-time web search",
     },
     {
-        image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200&q=80",
+        image: "https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=1200&q=80",
         Icon: TrendingUp,
         headline: "Track Every Bet",
         subtext: "Win rate, P/L, and trends in one place",
     },
     {
-        image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&q=80",
+        image: "https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=1200&q=80",
         Icon: Activity,
         headline: "Live Odds",
         subtext: "Pulled from real sportsbooks every 12 hours",
@@ -28,7 +28,9 @@ const FeatureCarousel = () => {
     const [current, setCurrent] = useState(0)
     const [paused, setPaused] = useState(false)
     const prefersReducedMotion = useRef(
-        typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        typeof window !== "undefined" &&
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ).current
 
     const prev = () => setCurrent(c => (c - 1 + slides.length) % slides.length)
@@ -36,7 +38,7 @@ const FeatureCarousel = () => {
 
     useEffect(() => {
         if (prefersReducedMotion || paused) return
-        const id = setInterval(next, INTERVAL_MS)
+        const id = setInterval(() => setCurrent(c => (c + 1) % slides.length), INTERVAL_MS)
         return () => clearInterval(id)
     }, [paused, prefersReducedMotion])
 
