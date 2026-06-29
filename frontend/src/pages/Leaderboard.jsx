@@ -1,7 +1,7 @@
 // frontend/src/pages/Leaderboard.jsx
 import Navbar from "@/components/Navbar"
 import { getLeaderBoard } from "@/services/leaderBoardService"
-import { Trophy } from "lucide-react"
+import { Medal, Trophy } from "lucide-react"
 import { useEffect, useState } from "react"
 
 const Leaderboard = () => {
@@ -60,10 +60,13 @@ const Leaderboard = () => {
                                 {leaderboard.map((entry, index) => (
                                     <tr
                                         key={entry.username}
-                                        className="border-t hover:bg-muted/30 transition-colors"
+                                        className={`border-t hover:bg-muted/30 transition-colors ${index < 3 ? "bg-muted/10" : ""}`}
                                     >
-                                        <td className="px-4 py-3 font-medium text-muted-foreground">
-                                            {index + 1}
+                                        <td className="px-4 py-3">
+                                            {index === 0 && <Trophy className="h-4 w-4 text-amber-400" />}
+                                            {index === 1 && <Medal className="h-4 w-4 text-slate-400" />}
+                                            {index === 2 && <Medal className="h-4 w-4 text-amber-600" />}
+                                            {index > 2 && <span className="font-medium text-muted-foreground">{index + 1}</span>}
                                         </td>
                                         <td className="px-4 py-3 font-medium">{entry.username}</td>
                                         <td className="px-4 py-3 text-right">
