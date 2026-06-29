@@ -22,7 +22,7 @@ const slides = [
     },
 ]
 
-const INTERVAL_MS = 6000
+const INTERVAL_MS = 3000
 
 const FeatureCarousel = () => {
     const [current, setCurrent] = useState(0)
