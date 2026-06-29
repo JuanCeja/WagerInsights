@@ -258,7 +258,7 @@ const MyBets = () => {
                                     : bet.game.away_team
 
                                 return (
-                                    <div key={bet.id} className="border rounded-lg p-4 mb-4">
+                                    <div key={bet.id} className="border rounded-lg p-4 mb-4 hover:shadow-md hover:border-primary/30 hover:-translate-y-1 transition-all">
                                         <div className="flex items-center justify-between mb-2">
                                             <p className="font-semibold">{bet.game.away_team} @ {bet.game.home_team}</p>
                                             <span className={`text-sm font-semibold capitalize ${statusColor(bet.status)}`}>

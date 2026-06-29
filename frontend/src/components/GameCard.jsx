@@ -5,7 +5,7 @@ const GameCard = ({ game, onBetClick }) => {
     const formatOdds = (odds) => odds > 0 ? `+${odds}` : odds
 
     return (
-        <div className="border rounded-lg p-4 hover:shadow-md hover:border-primary/30 transition-all">
+        <div className="border rounded-lg p-4 hover:shadow-md hover:border-primary/30 hover:-translate-y-1 transition-all">
             <div className="flex items-center justify-between mb-3">
                 <p className="font-bold">{game.away_team} @ {game.home_team}</p>
                 <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
