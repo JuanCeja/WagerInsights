@@ -1,5 +1,5 @@
 import { Activity, ChevronLeft, ChevronRight, Sparkles, TrendingUp } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 const slides = [
     {
@@ -27,20 +27,15 @@ const INTERVAL_MS = 6000
 const FeatureCarousel = () => {
     const [current, setCurrent] = useState(0)
     const [paused, setPaused] = useState(false)
-    const prefersReducedMotion = useRef(
-        typeof window !== "undefined" &&
-        typeof window.matchMedia === "function" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ).current
 
     const prev = () => setCurrent(c => (c - 1 + slides.length) % slides.length)
     const next = () => setCurrent(c => (c + 1) % slides.length)
 
     useEffect(() => {
-        if (prefersReducedMotion || paused) return
+        if (paused) return
         const id = setInterval(() => setCurrent(c => (c + 1) % slides.length), INTERVAL_MS)
         return () => clearInterval(id)
-    }, [paused, prefersReducedMotion])
+    }, [paused])
 
     return (
         <div
