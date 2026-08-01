@@ -37,6 +37,20 @@ def auto_settle_all_sports():
     finally:
         db.close()
         
+def auto_cleanup_stale_games():
+    """Background job to expire stale games older than 3 days still in 'upcoming' status"""
+
+    print("\n=== CLEANUP JOB STARTED ===")
+
+    db = SessionLocal()
+
+    try:
+        result = admin._cleanup_stale_games(db)
+        print(f"Games expired: {result['games_expired']}")
+    finally:
+        db.close()
+        print("=== CLEANUP JOB COMPLETE ===\n")
+
 def auto_sync_all_sports_and_games():
     """Background job to automatically syncs new sports and games"""
     
@@ -92,6 +106,11 @@ scheduler.add_job(
     func=auto_settle_all_sports,
     trigger="interval",
     hours=1
+)
+scheduler.add_job(
+    func=auto_cleanup_stale_games,
+    trigger="interval",
+    hours=24
 )
 
 @app.on_event("startup")

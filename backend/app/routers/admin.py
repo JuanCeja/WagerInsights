@@ -134,24 +134,19 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
         "summary": summary
     }
 
-@router.post("/cleanup-stale-games")
-def cleanup_stale_games(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
-    """
-    Mark games as 'expired' if they're older than 3 days and still 'upcoming'.
-    These are games that auto-settle couldn't catch (outside The Odds API's 3-day window).
-    """
-    
+def _cleanup_stale_games(db: Session) -> dict:
     cutoff = datetime.now() - timedelta(days=3)
-    
-    result = db.query(models.Game).filter(
+    games_expired = db.query(models.Game).filter(
         models.Game.game_date < cutoff,
         models.Game.status == "upcoming"
     ).update({"status": "expired"})
-    
     db.commit()
-    
     return {
-        "success": True,
-        "games_expired": result,
+        "games_expired": games_expired,
         "cutoff_date": cutoff.isoformat()
     }
+
+@router.post("/cleanup-stale-games")
+def cleanup_stale_games(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_admin_user)):
+    result = _cleanup_stale_games(db)
+    return {"success": True, **result}
