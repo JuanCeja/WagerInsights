@@ -30,7 +30,7 @@ class Game(Base):
     home_team_odds = Column(Float, nullable=False)
     away_team_odds = Column(Float, nullable=False)
     sport = Column(String, nullable=False)
-    game_date = Column(DateTime, nullable=False)
+    game_date = Column(DateTime(timezone=True), nullable=False)
     status = Column(String, default="upcoming")
     winner = Column(String, nullable=True)
     settled_at = Column(DateTime, nullable=True)
