@@ -40,7 +40,7 @@ def bet_analyzer(sport: str, home_team: str, away_team: str, bet_type: str, home
 
     Be balanced. A 5/10 is a normal sportsbook-priced bet, not a failure. Reserve "Pass" for bets you genuinely judge as 1-3."""
     
-    message = client.messages.create(
+    with client.messages.stream(
         model="claude-haiku-4-5",
         max_tokens=8192,
         messages=[
@@ -50,8 +50,6 @@ def bet_analyzer(sport: str, home_team: str, away_team: str, bet_type: str, home
                 }
             ],
             tools=[{"type": "web_search_20250305", "name": "web_search"}]
-    )
-
-    text_blocks = [block.text for block in message.content if block.type == "text"]
-    analysis_text = "".join(text_blocks)
-    return analysis_text
+    ) as stream:
+        for text in stream.text_stream:
+            yield text

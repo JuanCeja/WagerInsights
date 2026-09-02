@@ -4,6 +4,7 @@ from app import auth, crud, models, schemas
 from app.api_clients.anthropic_client import bet_analyzer
 from app.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 router = APIRouter(
@@ -52,7 +53,7 @@ def get_unique_bet(
     
     return bet
 
-@router.post("/analyze", response_model=schemas.AnalyzerResponse, status_code=status.HTTP_200_OK)
+@router.post("/analyze", status_code=status.HTTP_200_OK)
 def analyze_bet(
     bet: schemas.BetAnalyzeRequest,
     current_user: models.User = Depends(auth.get_current_user),
@@ -62,7 +63,7 @@ def analyze_bet(
 
     if not current_game:
         raise HTTPException(status_code=404, detail="Game does not exist")
-    
+
     sport = current_game.sport
     home_team = current_game.home_team
     away_team = current_game.away_team
@@ -72,6 +73,7 @@ def analyze_bet(
     bet_type = bet.bet_type
     date = current_game.game_date
 
-    analysis_text = bet_analyzer(sport, home_team, away_team, bet_type, home_team_odds, away_team_odds, bet_amount, date)
-
-    return schemas.AnalyzerResponse(analysis=analysis_text)
+    return StreamingResponse(
+        bet_analyzer(sport, home_team, away_team, bet_type, home_team_odds, away_team_odds, bet_amount, date),
+        media_type="text/plain"
+    )

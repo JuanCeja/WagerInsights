@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { analyzeBet, placeBet } from "@/services/betsService"
+import { placeBet, streamBetAnalysis } from "@/services/betsService"
 import { calculatePayout } from "@/utils/betCalculator.js"
 import { Loader2, Sparkles } from "lucide-react"
 import { useState } from "react"
@@ -41,10 +41,12 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
             setAnalysisText("")
             setAnalysisError("")
             setIsAnalysisLoading(true)
-            const response = await analyzeBet({ gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount) })
-            setAnalysisText(response.analysis)
+            await streamBetAnalysis(
+                { gameId: selectedGame.id, betType: selectedBetType, betAmount: parseFloat(betAmount) },
+                (chunk) => setAnalysisText((prev) => prev + chunk)
+            )
         } catch (error) {
-            setAnalysisError(error.response?.data?.detail || "Failed to fetch bet analysis")
+            setAnalysisError(error.response?.data?.detail || error.message || "Failed to fetch bet analysis")
         } finally {
             setIsAnalysisLoading(false)
         }
