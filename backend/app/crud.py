@@ -99,8 +99,8 @@ def get_all_games(
     
     if created_at is not None:
         query = query.filter(models.Game.created_at == created_at)
-        
-    return query.all()
+
+    return query.order_by(models.Game.game_date).all()
 
 def update_game_status(db: Session, game_id: int, winner: str, status: str = "completed"):
     game = db.query(models.Game).filter(models.Game.id == game_id).first()
