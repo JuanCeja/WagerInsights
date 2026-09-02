@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { placeBet, streamBetAnalysis } from "@/services/betsService"
 import { calculatePayout } from "@/utils/betCalculator.js"
 import { Loader2, Sparkles } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { toast } from "sonner"
 
@@ -16,7 +16,14 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
     const [analysisText, setAnalysisText] = useState("")
     const [analysisError, setAnalysisError] = useState("")
     const [isAnalysisLoading, setIsAnalysisLoading] = useState(false)
+    const analysisContainerRef = useRef(null)
 
+    useEffect(() => {
+        const container = analysisContainerRef.current
+        if (container) {
+            container.scrollTop = container.scrollHeight
+        }
+    }, [analysisText])
 
     const odds = selectedBetType === "home" ? selectedGame?.home_team_odds : selectedGame?.away_team_odds
     const teamBetOn = selectedBetType === "home" ? selectedGame?.home_team : selectedGame?.away_team
@@ -100,7 +107,7 @@ const BetDialog = ({ selectedGame, selectedBetType, onClose, onBetPlaced }) => {
                 )}
 
                 {analysisText && (
-                    <div className="max-h-64 overflow-y-auto text-sm p-3 rounded-md bg-muted/40 border prose prose-sm prose-invert max-w-none">
+                    <div ref={analysisContainerRef} className="max-h-64 overflow-y-auto text-sm p-3 rounded-md bg-muted/40 border prose prose-sm prose-invert max-w-none">
                         <ReactMarkdown>{analysisText}</ReactMarkdown>
                     </div>
                 )}
