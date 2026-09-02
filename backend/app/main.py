@@ -110,7 +110,7 @@ scheduler.add_job(
 scheduler.add_job(
     func=auto_cleanup_stale_games,
     trigger="interval",
-    hours=24
+    hours=1
 )
 
 @app.on_event("startup")

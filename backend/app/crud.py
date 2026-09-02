@@ -191,7 +191,10 @@ def create_bet(db: Session, user_id: int, bet:schemas.BetCreate):
     
     if game.status != "upcoming":
         raise ValueError("Game is not available for betting")
-    
+
+    if game.game_date <= datetime.now(timezone.utc):
+        raise ValueError("Game has already started")
+
     if bet.bet_type not in ["home", "away"]:
         raise ValueError("Invalid data type")
 

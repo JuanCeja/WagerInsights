@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app import auth, crud, models, schemas
 from app.api_clients.odds_api_client import OddsAPIClient
@@ -135,7 +135,7 @@ def _sync_single_sport(sport: str, db: Session) -> dict:
     }
 
 def _cleanup_stale_games(db: Session) -> dict:
-    cutoff = datetime.now() - timedelta(days=3)
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=36)
     games_expired = db.query(models.Game).filter(
         models.Game.game_date < cutoff,
         models.Game.status == "upcoming"
