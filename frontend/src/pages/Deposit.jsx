@@ -1,6 +1,7 @@
 import DepositForm from "@/components/DepositForm"
 import Navbar from "@/components/Navbar"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { useUser } from "@/contexts/UserContext"
 import { createPaymentIntent } from "@/services/depositsService"
@@ -44,57 +45,77 @@ const Deposit = () => {
 
             {/* initial/amount stage */}
             {stage === "amount" && (
-                <div>
-                    <Input
-                        type="number"
-                        placeholder="Enter custom amount"
-                        value={selectedAmount}
-                        onChange={(e) => setSelectedAmount(parseFloat(e.target.value) || 0)}
-                    />
+                <div className="max-w-6xl mx-auto px-6 py-8">
+                    <h1 className="text-3xl font-bold mb-6">Deposit</h1>
 
-                    {amounts.map((amount) => (
-                        <Button key={amount} onClick={() => setSelectedAmount(amount)}>
-                            ${amount}
-                        </Button>
-                    ))}
+                    <Card className="max-w-md">
+                        <CardHeader>
+                            <CardTitle>Choose an amount</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-4">
+                            <Input
+                                type="number"
+                                placeholder="Enter custom amount"
+                                value={selectedAmount}
+                                onChange={(e) => setSelectedAmount(parseFloat(e.target.value) || 0)}
+                            />
 
-                    <Button onClick={handleContinue} disabled={selectedAmount === 0}>
-                        Continue
-                    </Button>
+                            <div className="flex flex-wrap gap-2">
+                                {amounts.map((amount) => (
+                                    <Button
+                                        key={amount}
+                                        variant={selectedAmount === amount ? "default" : "outline"}
+                                        onClick={() => setSelectedAmount(amount)}
+                                        className="min-h-11"
+                                    >
+                                        ${amount}
+                                    </Button>
+                                ))}
+                            </div>
 
-                    {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                            <Button onClick={handleContinue} disabled={selectedAmount === 0} className="w-full sm:w-auto min-h-11">
+                                Continue
+                            </Button>
+
+                            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                        </CardContent>
+                    </Card>
                 </div>
             )}
 
             {/* card stage */}
             {stage === "card" && (
-                <Elements
-                    stripe={stripePromise}
-                    options={{
-                        clientSecret,
-                        appearance: {
-                            theme: "night",
-                            variables: {
-                                colorPrimary: "#a855f7",
-                                colorBackground: "#0f172a",
-                                colorText: "#e2e8f0",
-                                borderRadius: "8px",
-                            },
-                        },
-                    }}
-                >
-                    <DepositForm
-                        paymentIntentId={paymentIntentId}
-                        onProcessing={() => setStage("processing")}
-                        onSuccess={() => setStage("success")}
-                        onError={(msg) => setErrorMessage(msg)}
-                    />
-                </Elements>
+                <div className="max-w-6xl mx-auto px-6 py-8">
+                    <div className="max-w-md">
+                        <Elements
+                            stripe={stripePromise}
+                            options={{
+                                clientSecret,
+                                appearance: {
+                                    theme: "night",
+                                    variables: {
+                                        colorPrimary: "#a855f7",
+                                        colorBackground: "#0f172a",
+                                        colorText: "#e2e8f0",
+                                        borderRadius: "8px",
+                                    },
+                                },
+                            }}
+                        >
+                            <DepositForm
+                                paymentIntentId={paymentIntentId}
+                                onProcessing={() => setStage("processing")}
+                                onSuccess={() => setStage("success")}
+                                onError={(msg) => setErrorMessage(msg)}
+                            />
+                        </Elements>
+                    </div>
+                </div>
             )}
-            
+
             {/* processing stage */}
             {stage === "processing" && (
-                <div className="flex flex-col items-center justify-center py-12">
+                <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col items-center justify-center text-center">
                     <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
                     <p className="text-muted-foreground">Crediting your balance...</p>
                 </div>
@@ -102,7 +123,7 @@ const Deposit = () => {
 
             {/* success stage */}
             {stage === "success" && (
-                <div className="flex flex-col items-center justify-center py-12">
+                <div className="max-w-6xl mx-auto px-6 py-12 flex flex-col items-center justify-center text-center">
                     <CheckCircle2 className="h-14 w-14 text-green-500 mb-4" />
                     <h2 className="text-2xl font-bold mb-2">Deposit Successful!</h2>
                     <p className="text-muted-foreground mb-1">
@@ -111,12 +132,13 @@ const Deposit = () => {
                     <p className="text-lg font-semibold mb-6">
                         New Balance: ${user?.balance?.toFixed(2)}
                     </p>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <Link to="/dashboard">
-                            <Button>Back to Dashboard</Button>
+                            <Button className="w-full sm:w-auto">Back to Dashboard</Button>
                         </Link>
                         <Button
                             variant="outline"
+                            className="w-full sm:w-auto"
                             onClick={() => {
                                 setStage("amount")
                                 setSelectedAmount(0)
